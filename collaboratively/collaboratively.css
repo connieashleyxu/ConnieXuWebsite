@@ -108,7 +108,10 @@ body {
 }
 
 
-
+.emphasize{
+  color: #F8CD46;
+  font-size: 20px;
+}
 
 /*collab*/
 .collabIntro{
@@ -162,7 +165,7 @@ body {
 
 .workText{
   text-align: center;
-  padding: 0px 250px 0px 250px;
+  padding: 0px 500px 0px 500px;
   color: #FFF;
 }
 

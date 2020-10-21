@@ -87,6 +87,11 @@ body {
   margin-left: 30px;
 }
 
+.emphasize{
+  color: #94D6DE;
+  font-size: 20px;
+}
+
 #myBtn {
   display: none;
   position: fixed;
@@ -163,7 +168,7 @@ body {
 
 .workText{
   text-align: center;
-  padding: 0px 250px 0px 250px;
+  padding: 0px 500px 0px 500px;
   color: #FFF;
 }
 
