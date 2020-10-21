@@ -51,6 +51,17 @@ body {
   left: 16px;
 }
 
+.progress-container {
+  width: 100%;
+  height: 8px;
+  background: #8AAA4B;
+}
+
+.progress-bar {
+  height: 8px;
+  background: #D2E6BE;
+  width: 0%;
+}
 
 /*footer*/
 .fa {

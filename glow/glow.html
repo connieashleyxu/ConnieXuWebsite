@@ -9,7 +9,11 @@
     <link rel="stylesheet" href="/glow/glow.css" />
     <title>Connie Xu</title>
     <!-- HERE IMG -->
-    <link rel="icon" type="image/png" href="https://cdn.glitch.com/6e343b56-ce02-4a34-a699-eefc7e6c81a4%2FConnie_Logo.png?v=1603293162411" />
+    <link
+      rel="icon"
+      type="image/png"
+      href="https://cdn.glitch.com/6e343b56-ce02-4a34-a699-eefc7e6c81a4%2FConnie_Logo.png?v=1603293162411"
+    />
     <!-- import the webpage's javascript file -->
     <script src="/script.js" defer></script>
 
@@ -54,16 +58,19 @@
           ideas for iterations for our lamp product as well as develop our
           marketing aspects.
         </p>
-        <p class="glowRoles">Programs Used: Adobe Illustrator, Adobe Photoshop, Sketch, Fusion 360, Final Cut Pro</p>
+        <p class="glowRoles">
+          Programs Used: Adobe Illustrator, Adobe Photoshop, Sketch, Fusion 360,
+          Final Cut Pro
+        </p>
       </div>
 
       <div class="glowDetails">
         <div class="workText">
           <h1 class="glowInsight label"><br /><br />The Problem</h1>
           <p class="glowInsight information">
-            Too many people face consequences from being distanced -- that may
-            be military parents and children; physically-distanced best friends;
-            or long-distance relationships.
+            Too many people face consequences from being distanced-- that may be
+            military parents and children; physically-distanced best friends; or
+            long-distance relationships.
             <br /><br />
             Studies have shown that military parents' inability to interact with
             their family hurts the familial dynamic and hurts the military
@@ -85,20 +92,21 @@
       </div>
       <div class="workText">
         <h1 class="glowIdea label">Prototype</h1>
-     
-      <p class="glowIdea information">
-        <br />
-        When you draw on one Glow Lamp, the drawing appears on your loved one’s
-        Glow Lamp across the world; users have the ability to send live doodles
-        to each other with Glow’s interactive canvas.
-      </p>
-        
+
+        <p class="glowIdea information">
+          <br />
+          When you draw on one Glow Lamp, the drawing appears on your loved
+          one’s Glow Lamp across the world; users have the ability to send live
+          doodles to each other with Glow’s interactive canvas.
+        </p>
+
         <p class="aeroIdea information">
-            *The logo and storyboard were created by my teammates, but were included to display Glow's usabiltiy.
-          </p>
-         </div>
-      
-       <!-- graphic -->
+          *The logo and storyboard were created by my teammates, but were
+          included to display Glow's usabiltiy.
+        </p>
+      </div>
+
+      <!-- graphic -->
       <div class="graphics">
         <img
           src="https://cdn.glitch.com/6e343b56-ce02-4a34-a699-eefc7e6c81a4%2F93769a44-5711-473b-b7a2-fe35f22d34df.image.png?v=1603231537852"
@@ -113,8 +121,8 @@
         />
         <br /><br />
       </div>
-      
-       <div class="workText">
+
+      <div class="workText">
         <h1 class="cogniteIdea label">Marketing Ad Campaigns</h1>
       </div>
       <!-- graphic -->
@@ -132,13 +140,14 @@
         />
         <br /><br />
       </div>
-      
+
       <div class="workText">
         <p class="glowIdea information">
-          Below is a sample media ad for Glow that I edited -- feel free to unmute the video to listen to the audio with the ad.
-      </p>
+          Below is a sample media ad for Glow that I edited -- feel free to
+          unmute the video to listen to the audio with the ad.
+        </p>
       </div>
-      
+
       <div class="videoDiv">
         <video width="1600" controls autoplay loop muted>
           <source
@@ -152,7 +161,7 @@
           Your browser does not support HTML video.
         </video>
       </div>
-    <br /><br />
+      <br /><br />
     </div>
 
     <!-- footer -->
@@ -196,13 +205,20 @@
     </footer>
 
     <!-- header.logo -->
+
     <header class="header" id="myHeader">
+      <div class="header">
+        <div class="progress-container">
+          <div class="progress-bar" id="myBar"></div>
+        </div>
+      </div>
       <!-- nav bar -->
-      <a href="/index.html" class="option"><img
+      <a href="/index.html" class="option"
+        ><img
           src="https://cdn.glitch.com/6e343b56-ce02-4a34-a699-eefc7e6c81a4%2FConnie_Logo.png?v=1603293162411"
           alt="logo"
           class="logoGif"
-                                                /></a>
+      /></a>
       <nav>
         <div class="nav-bar-options">
           <button class="option">
@@ -214,5 +230,18 @@
         </div>
       </nav>
     </header>
+    
+    <script>
+// When the user scrolls the page, execute myFunction 
+window.onscroll = function() {myFunction()};
+
+function myFunction() {
+  var winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+  var height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+  var scrolled = (winScroll / height) * 100;
+  document.getElementById("myBar").style.width = scrolled + "%";
+}
+</script>
+    
   </body>
 </html>
