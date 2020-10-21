@@ -1,0 +1,139 @@
+* {
+  font-family: 'Karla', sans-serif;
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #CF81B1;
+}
+
+/*nav bars*/
+.nav-bar-options {
+  display: flex;
+  justify-content: flex-end;
+  text-transform: uppercase;
+  list-style-type: none;
+  margin: 30px 80px 0px 0px;
+}
+
+.option {
+  border: none;
+  outline: none;
+  padding: 10px 20px 0px 0px;
+  background-color: transparent;
+  color: #FFF;
+  cursor: pointer;
+  text-transform: uppercase;
+  font-size: 15px;
+  text-decoration: none;
+}
+
+.active {
+  text-decoration: underline;
+  cursor: default;
+}
+
+
+/*header*/
+.header {
+   position: fixed;
+   left: 0;
+   top: 0;
+   width: 100%;
+   text-align: center;
+}
+
+/*footer*/
+.fa {
+  text-decoration: none;
+  color: white;
+}
+
+.fa:hover {
+  color: #292B2C;
+}
+
+.footer {
+  background-color: #C76BA4;
+  color: #FFF;
+  padding: 20px;
+  
+}
+
+.socialMedia {
+  font-size: 30px;
+  word-spacing: 30px;
+  margin-left: 30px;
+}
+
+#myBtn {
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  right: 30px;
+  z-index: 99;
+  font-size: 18px;
+  border: none;
+  outline: none;
+  background-color: transparent;
+  color: #FFF;
+  cursor: pointer;
+  padding: 15px;
+  border-radius: 4px;
+  font-size: 40px;
+}
+
+#myBtn:hover {
+  color: #292B2C;
+}
+
+
+
+
+/*about*/
+.about {
+  display: flex;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.aboutImageMe {
+  margin-top: 125px;
+  margin-left: 100px;
+  margin-bottom: 60px;
+}
+
+.aboutDescription {
+  margin-top: 125px;
+  margin-left: 100px;
+  margin-right: 200px;
+  color: #FFF;
+}
+
+.hookIntro {
+  padding-bottom: 50px;
+  font-size: 40px;
+}
+
+.furtherIntro, .contactInfo {
+  font-size: 18px;
+}
+
+.emailContact{
+  color: #282B2C;
+  text-decoration: none;
+}
+
+.emailContact:hover{
+  color: #FFF;
+  text-decoration: underline;
+}
+
+.hereResume{
+  color: #282B2C;
+  text-decoration: none;
+}
+
+.hereResume:hover{
+  color: #FFF;
+}

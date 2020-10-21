@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- favicon-->
+    <title>connieashleyxu</title>
+    <!-- HERE IMG -->
+    <link rel="icon" type="image/png" href="" />
+
+    <!-- import the webpage's stylesheet -->
+    <link rel="stylesheet" href="/style.css" />
+
+    <!-- import the webpage's javascript file -->
+    <script src="/script.js" defer></script>
+
+    <!-- import social media footer -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+
+    <!-- font links -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Karla&display=swap"
+      rel="stylesheet"
+    />
+    <link href="https://fonts.googleapis.com/css2?family=Karla:wght@700&display=swap" rel="stylesheet">
+  </head>
+  <body>
+    <!-- content -->
+    <section class="work">
+      <div class="opening">
+        <img
+          src="https://cdn.glitch.com/6e343b56-ce02-4a34-a699-eefc7e6c81a4%2FScreen%20Shot%202020-07-20%20at%2011.27.56%20PM.png?v=1595305684861"
+          alt="Picture of Connie"
+          class="connieImage"
+        />
+        <p class="bottomArrow" onclick="scrollDiv()">
+          ╲╱
+        </p>
+      </div>
+
+      <div class="introToNav">
+        <div class="introBrief" id="introBrief">
+          <p>
+            Hi, I'm Connie Xu -- a student at USC studying
+            <a
+              class="typewrite"
+              data-period="2000"
+              data-type='[ "arts", "technology", "business of innovation" ]'
+            >
+              <span class="wrap"></span>
+            </a>
+          </p>
+        </div>
+
+        <!-- organize categories -->
+        <div class="parentCategory">
+          <div class="category" id="myBtnContainer">
+            <button class="btn active" onclick="filterSelection('all')">
+              Show all
+            </button>
+            <button class="btn" onclick="filterSelection('coding')">
+              Coding
+            </button>
+            <button class="btn" onclick="filterSelection('uiux')">UI/UX</button>
+            <button class="btn" onclick="filterSelection('branding')">
+              Branding
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- usual updates here -->
+      <div class="actualSample">
+        <div class="row">
+          <div class="column branding">
+            <div class="content">
+              <a href="/glow/glow.html">
+                <img
+                  src="https://cdn.glitch.com/6e343b56-ce02-4a34-a699-eefc7e6c81a4%2F11.png?v=1603232844398"
+                  alt="Glow"
+                  style="width:100%"
+                />
+                <!-- <h1 class="centered">Glow</h1>-->
+              </a>
+            </div>
+          </div>
+          <div class="column branding uiux">
+            <div class="content">
+              <a href="/aero/aero.html">
+                <img
+                  src="https://cdn.glitch.com/6e343b56-ce02-4a34-a699-eefc7e6c81a4%2Flogos%20of%20portfolio.png?v=1603235974644"
+                  alt="aero"
+                  style="width:100%"
+                />
+                <!-- <h1 class="centered">Aero</h1>-->
+              </a>
+            </div>
+          </div>
+          <div class="column branding">
+            <div class="content">
+              <a href="/grandmail/grandmail.html">
+                <img
+                  src="https://cdn.glitch.com/6e343b56-ce02-4a34-a699-eefc7e6c81a4%2F10.png?v=1603232844796"
+                  alt="Grandmail"
+                  style="width:100%"
+                />
+                <!-- <h1 class="centered">Grandmail</h1> -->
+              </a>
+            </div>
+          </div>
+          <div class="column uiux branding">
+            <div class="content">
+              <a href="/collaboratively/collaboratively.html">
+                <img
+                  src="https://cdn.glitch.com/6e343b56-ce02-4a34-a699-eefc7e6c81a4%2F9.png?v=1603232844547"
+                  alt="Collaborative.ly"
+                  style="width:100%"
+                />
+                <!-- <h1 class="centered">Collaborative.ly</h1> -->
+              </a>
+            </div>
+          </div>
+          <div class="column uiux branding">
+            <div class="content">
+              <a href="/drill/drill.html">
+                <img
+                  src="https://cdn.glitch.com/6e343b56-ce02-4a34-a699-eefc7e6c81a4%2F1.png?v=1603232844307"
+                  alt="Drill"
+                  style="width:100%"
+                />
+                <!-- <h1 class="centered">Drill</h1> -->
+              </a>
+            </div>
+          </div>
+          <div class="column coding uiux branding">
+            <div class="content">
+              <a href="/cognite/cognite.html">
+                <img
+                  src="https://cdn.glitch.com/6e343b56-ce02-4a34-a699-eefc7e6c81a4%2F2.png?v=1603232843766"
+                  alt="Cognite"
+                  style="width:100%"
+                />
+                <!-- <h1 class="centered">Cognite</h1> -->
+              </a>
+            </div>
+          </div>
+          <div class="column coding uiux branding">
+            <div class="content">
+              <a href="/mindfulMinutes/mindfulMinutes.html">
+                <img
+                  src="https://cdn.glitch.com/6e343b56-ce02-4a34-a699-eefc7e6c81a4%2F3.png?v=1603232845559"
+                  alt="Mindful Minutes"
+                  style="width:100%"
+                />
+                <!-- <h1 class="centered">Mindful Minutes</h1> -->
+              </a>
+            </div>
+          </div>
+
+          <div class="column coding uiux">
+            <div class="content">
+              <a href="/teaTime/teaTime.html">
+                <img
+                  src="https://cdn.glitch.com/6e343b56-ce02-4a34-a699-eefc7e6c81a4%2F4.png?v=1603232843397"
+                  alt="Tea Time"
+                  style="width:100%"
+                />
+                <!-- <h1 class="centered">Tea Time</h1> -->
+              </a>
+            </div>
+          </div>
+          <div class="column uiux branding coding">
+            <div class="content">
+              <a href="/das/das.html">
+                <img
+                  src="https://cdn.glitch.com/6e343b56-ce02-4a34-a699-eefc7e6c81a4%2F5.png?v=1603232844197"
+                  alt="Daily Awareness Society"
+                  style="width:100%"
+                />
+                <!-- <h1 class="centered">Daily Awareness Society</h1> -->
+              </a>
+            </div>
+          </div>
+          <div class="column uiux branding">
+            <div class="content">
+              <a href="/tbo/tbo.html">
+                <img
+                  src="https://cdn.glitch.com/6e343b56-ce02-4a34-a699-eefc7e6c81a4%2F6.png?v=1603232845747"
+                  alt="TAMS Business Organization"
+                  style="width:100%"
+                />
+                <!-- <h1 class="centered">TAMS Business Organization</h1> -->
+              </a>
+            </div>
+          </div>
+          <div class="column branding">
+            <div class="content">
+              <a href="/waiveTheGrain/waiveTheGrain.html">
+                <img
+                  src="https://cdn.glitch.com/6e343b56-ce02-4a34-a699-eefc7e6c81a4%2F7.png?v=1603232843898"
+                  alt="Waive the Grain"
+                  style="width:100%"
+                />
+                <!-- <h1 class="centered">Waive the Grain</h1> -->
+              </a>
+            </div>
+          </div>
+          <div class="column">
+            <div class="content">
+              <a href="/personal/personal.html">
+                <img
+                  src="https://cdn.glitch.com/6e343b56-ce02-4a34-a699-eefc7e6c81a4%2F8.png?v=1603232845862"
+                  alt="Personal"
+                  style="width:100%"
+                />
+                <!-- <h1 class="centered">Personal</h1> -->
+              </a>
+            </div>
+          </div>
+          <!-- END GRID -->
+        </div>
+      </div>
+    </section>
+
+    <!-- footer -->
+    <footer class="footer">
+
+      <p class="socialMedia">
+        <a
+          href="https://www.linkedin.com/in/connie-xu-712564184/"
+          target="_blank"
+          class="fa fa-linkedin"
+        ></a>
+        <a
+          href="https://www.youtube.com/channel/UCo9MguSArLMAI4rV4SfPOuw"
+          target="_blank"
+          class="fa fa-youtube"
+        ></a>
+        <a
+          href="https://www.facebook.com/connieashleyxu"
+          target="_blank"
+          class="fa fa-facebook"
+        ></a>
+        <a
+          href="https://twitter.com/connieashleyxu"
+          target="_blank"
+          class="fa fa-twitter"
+        ></a>
+        <a
+          href="https://www.instagram.com/connieashleyxu/"
+          target="_blank"
+          class="fa fa-instagram"
+        ></a>
+      </p>
+
+      <button onclick="topFunction()" id="myBtn" title="Go to top" class="upPage">⇧</button>
+    </footer>
+
+    <!-- header.logo -->
+    <header class="header" id="myHeader">
+      <!-- nav bar -->
+      <nav>
+        <div class="nav-bar-options">
+          <button class="option active"><a href="/index.html" class="option active">Work</a></button>
+          <button class="option"><a href="/about.html" class="option">About</a></button>
+        </div>
+      </nav>
+    </header>
+  </body>
+</html>
