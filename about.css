@@ -126,6 +126,10 @@ body {
   font-size: 18px;
 }
 
+.contactInfos{
+  color: #282B2C;
+}
+
 .emailContact{
   color: #282B2C;
   text-decoration: none;
