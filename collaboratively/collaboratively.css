@@ -34,6 +34,13 @@ body {
   cursor: default;
 }
 
+.logoGif {
+  height: 80px;
+  position: absolute;
+  top: 8px;
+  left: 16px;
+}
+
 
 /*header*/
 .header {

@@ -132,7 +132,7 @@ body {
   text-align: center;
   color: white;
   
-  height: 580px;
+  height: 58vh;
   overflow: hidden; /* [1.2] Hide the overflowing of child elements */
 }
 
