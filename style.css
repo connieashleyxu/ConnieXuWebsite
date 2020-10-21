@@ -86,7 +86,12 @@ body {
   color: #292B2C;
 }
 
-
+.logoGif {
+  height: 80px;
+  position: absolute;
+  top: 8px;
+  left: 16px;
+}
 
 
 /*index-work*/
