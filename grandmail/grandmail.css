@@ -59,12 +59,12 @@ body {
 
 .progress-bar {
   height: 8px;
-  background: #00A1AD;
+  background: #FEDC00;
   width: 0%;
 }
 
 .emphasize{
-  color: #00A1AD;
+  color: #FEDC00;
   font-size: 20px;
 }
 

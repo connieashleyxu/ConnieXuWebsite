@@ -115,14 +115,14 @@ body {
 
 /*collab*/
 .collabIntro{
-  position: relative;
+ position: relative;
   text-align: center;
   color: #FFF;
   font-weight: bold;
 }
 
 .bottomArrow{
-  position: absolute;
+ position: absolute;
   font-size: 25px;
   bottom: 10px;
   left: 50%;
