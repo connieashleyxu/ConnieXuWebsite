@@ -14,7 +14,9 @@ body {
   justify-content: flex-end;
   text-transform: uppercase;
   list-style-type: none;
-  margin: 30px 80px 0px 0px;
+  /*margin: 30px 80px 0px 0px;*/
+  margin-top: 1%;
+  margin-right: 3%;
 }
 
 .option {
@@ -45,10 +47,12 @@ body {
 }
 
 .logoGif {
-  height: 80px;
-  position: absolute;
-  top: 8px;
-  left: 16px;
+ height: 150%;
+  width: auto;
+  position:absolute;
+  top: 1%;
+  left: 0.5%;
+  margin-top: 1%;
 }
 
 .progress-container {
@@ -89,7 +93,8 @@ body {
 .socialMedia {
   font-size: 30px;
   word-spacing: 30px;
-  margin-left: 30px;
+  /*margin-left: 30px;*/
+  margin-left: 1%;
 }
 
 #myBtn {
@@ -127,7 +132,8 @@ body {
 .bottomArrow{
   position: absolute;
   font-size: 25px;
-  bottom: 10px;
+  /*bottom: 10px;*/
+  bottom: 1%;
   left: 50%;
   cursor: pointer;
 }
@@ -157,7 +163,8 @@ body {
 
 .mindfulMinutesAbout {
   text-align: center;
-  padding: 100px 400px 100px 400px;
+  /*padding: 100px 400px 100px 400px;*/
+  padding: 8% 18% 8% 18%;
   color: #292B2C;
   background-color: #FFF;
 }
@@ -169,13 +176,15 @@ body {
 
 .workText{
   text-align: center;
-  padding: 0px 500px 0px 500px;
+  /*padding: 0px 500px 0px 500px;*/
+  padding: 0% 28% 0% 28%;
   color: #FFF;
 }
 
 .label{
   font-size: 50px;
-  margin-top: 50px;
+ /*margin-top: 50px;*/
+  marign-top: 20%;
 }
 
 .information{
