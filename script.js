@@ -140,6 +140,12 @@ function dasScroll() {
   elmnt.scrollIntoView();
 }
 
+//button down scroll to leaf cognite
+function leafScroll() {
+  var elmnt = document.getElementById("leafAbout");
+  elmnt.scrollIntoView();
+}
+
 //button down scroll to div drill
 function drillScroll() {
   var elmnt = document.getElementById("drillAbout");
