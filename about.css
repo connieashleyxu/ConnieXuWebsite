@@ -160,3 +160,7 @@ body {
 .hereResume:hover{
   color: #FFF;
 }
+
+li {
+  list-style-type: none;
+}
