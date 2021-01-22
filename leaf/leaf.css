@@ -1,11 +1,10 @@
 * {
-  font-family: 'Barlow', sans-serif;
-
+  font-family: "Barlow", sans-serif;
   scroll-behavior: smooth;
 }
 
 body {
-  background-color: #C4DEC3;
+  background-color: #BCD5AC;
   line-height: 23pt;
 }
 
@@ -37,24 +36,24 @@ body {
   cursor: default;
 }
 
-.emphasize{
+.emphasize {
   color: #B38E4F;
   font-size: 20px;
 }
 
 /*header*/
 .header {
-   position: fixed;
-   left: 0;
-   top: 0;
-   width: 100%;
-   text-align: center;
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  text-align: center;
 }
 
 .logoGif {
   height: 150%;
   width: auto;
-  position:absolute;
+  position: absolute;
   top: 1%;
   left: 0.5%;
   margin-top: 1%;
@@ -63,7 +62,7 @@ body {
 .progress-container {
   width: 100%;
   height: 8px;
-  background: #C4DEC3;
+  background: #BCD5AC;
 }
 
 .progress-bar {
@@ -86,7 +85,6 @@ body {
   background-color: #C76BA4;
   color: #FFF;
   padding: 20px;
-  
 }
 
 .socialMedia {
@@ -117,18 +115,15 @@ body {
   color: #292B2C;
 }
 
-
-
-
 /*LEAF*/
-.leafIntro{
+.leafIntro {
   position: relative;
   text-align: center;
   color: #000;
   font-weight: bold;
 }
 
-.bottomArrow{
+.bottomArrow {
   position: absolute;
   font-size: 25px;
   /*bottom: 10px;*/
@@ -160,11 +155,19 @@ body {
 }
 
 .leafAbout {
-  text-align: center;
+  text-align: left;
   /*padding: 100px 400px 100px 400px;*/
-  padding: 8% 18% 8% 18%;
+  padding: 8% 28% 8% 28%;
   color: #292B2C;
   background-color: #FFF;
+}
+
+.leafProblem {
+  text-align: left;
+  /*padding: 100px 400px 100px 400px;*/
+  padding: 4% 28% 4% 28%;
+  color: #292B2C;
+  background-color: #FFCC70;
 }
 
 .leafRoles {
@@ -172,20 +175,20 @@ body {
   color: #A8A8A8;
 }
 
-.workText{
-  text-align: center;
+.workText {
+  text-align: left;
   /*padding: 0px 500px 0px 500px;*/
   padding: 0% 28% 0% 28%;
   color: #292B2C;
 }
 
-.label{
+.label {
   font-size: 50px;
   /*margin-top: 50px;*/
   marign-top: 20%;
 }
 
-.information{
+.information {
   font-size: 20px;
 }
 
@@ -204,18 +207,131 @@ body {
   margin-bottom: 100px;
 }
 
-
-.workGraphic{
+.workGraphic {
   display: block;
   margin-left: auto;
   margin-right: auto;
   width: 100%;
 }
 
-.workGraphics{
+.workGraphics {
   display: block;
   margin-left: auto;
   margin-right: auto;
   width: 30%;
 }
 
+/* Create three equal columns that floats next to each other */
+.column {
+  float: left;
+  width: 30%;
+  padding: 10px;
+  height: 300px; /* Should be removed. Only for demonstration */
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.column-2 {
+  float: left;
+  width: 50%;
+}
+
+/* Clear floats after the columns */
+.row-2:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.quote {
+  width: 20%;
+  opacity: 0.4;
+}
+
+.process {
+  position: relative;
+  left: -25%;
+}
+
+.workImg {
+  height: 30%;
+}
+
+.workImgInner {
+  width: 20%;
+}
+
+.workImgInnerSolo {
+  width: 12%;
+}
+
+
+.workImgInnerGraphic{
+  width: 100%;
+}
+
+input[type="checkbox"] {
+  display: none;
+}
+.wrap-collabsible {
+  margin: -1.2em 30rem 1.2em;
+}
+.lbl-toggle {
+  display: block;
+  text-align: center;
+  padding: 1rem;
+  font-size: 30px;
+  color: #1A1A1A;
+  background: #FFCC70;
+  cursor: pointer;
+  border-radius: 7px;
+  transition: all 0.25s ease-out;
+}
+.lbl-toggle:hover {
+  color: #1A1A1A;
+}
+.lbl-toggle::before {
+  content: " ";
+  display: inline-block;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-left: 5px solid currentColor;
+  vertical-align: middle;
+  margin-right: 0.7rem;
+  transform: translateY(-2px);
+  transition: transform 0.2s ease-out;
+}
+.toggle:checked + .lbl-toggle::before {
+  transform: rotate(90deg) translateX(-3px);
+}
+.collapsible-content {
+  max-height: 0px;
+  overflow: hidden;
+  transition: max-height 0.25s ease-in-out;
+}
+.toggle:checked + .lbl-toggle + .collapsible-content {
+  max-height: 100%;
+}
+.toggle:checked + .lbl-toggle {
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+.collapsible-content .content-inner {
+  background: #FFFFFF;
+  border-bottom: 1px solid #1A1A1A;
+  border-bottom-left-radius: 7px;
+  border-bottom-right-radius: 7px;
+  padding: 0.5rem 1rem;
+}
+.collapsible-content p {
+  margin-bottom: 0;
+}
+
+.future-steps {
+  width: 80%;
+}

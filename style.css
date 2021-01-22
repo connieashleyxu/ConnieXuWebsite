@@ -52,13 +52,14 @@ body {
 }
 
 .fa:hover {
-  color: #292B2C;
+  color: #292B2C
 }
 
 .footer {
   background-color: #C76BA4;
   color: #FFF;
   padding: 20px;
+  margin-top: 1%;
 }
 
 .socialMedia {

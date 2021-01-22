@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XX5P66S1LC"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-XX5P66S1LC');
+</script>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- import the webpage's stylesheet -->
+    <link rel="stylesheet" href="/cognite/cognite.css" />
+    <title>Cognite</title>
+    <!-- HERE IMG -->
+    <link
+      rel="icon"
+      type="image/png"
+      href="https://cdn.glitch.com/6e343b56-ce02-4a34-a699-eefc7e6c81a4%2FConnie_Logo%202.png?v=1603325602341"
+    />
+    <!-- import the webpage's javascript file -->
+    <script src="/script.js" defer></script>
+
+    <!-- import social media footer -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+
+    <!-- font links -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Karla&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Karla:wght@700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300&display=swap" rel="stylesheet">
+  </head>
+
+  <body>
+    <!-- content -->
+    <div class="cogniteContent">
+      <div class="cogniteIntro">
+        <img
+          src="https://cdn.glitch.com/6e343b56-ce02-4a34-a699-eefc7e6c81a4%2FScreen%20Shot%202020-07-20%20at%2011.35.35%20PM.png?v=1595306140853"
+          class="cogniteIntroImage"
+        />
+        <div class="centered">
+          <h1 class="workTitle">Cognite</h1>
+          <p class="workDescription">Cognitive Impairment Diagnosis App</p>
+        </div>
+
+        <p class="bottomArrow" onclick="cogniteScroll()">╲╱</p>
+      </div>
+
+      <div class="cogniteAbout" id="cogniteAbout">
+        <p class="cogniteRoles">Roles: UI/UX Designer, App Developer, ML Researcher</p>
+        <p class="cogniteExplain">
+          As a research assistant at the Human Intelligence and Language
+          Technologies (HiLT) Labs housed in the University of North Texas
+          (UNT), we discovered a Machine Learning algorithm to diagnose various
+          cognitive disorders in just seconds. Building upon the research
+          findings, I designed and branded an app (Cognite) to bring cognitive
+          diagnosis to the fingertips of millions suffering from cognitive
+          impairment.
+        </p>
+        <p class="cogniteRoles">Programs Used: Microsoft PowerPoint, Adobe Illustrator, Adobe Photoshop, Final Cut Pro</p>
+        <p class="cogniteRoles">Code Language: Python (Machine Learning and Natural Language Processing)</p>
+      </div>
+
+      <div class="cogniteDetails">
+        <div class="workText">
+          <h1 class="cogniteInsight label"><br /><br />Problem</h1>
+          <p class="cogniteInsight information">
+            <strong class="emphasize">Cognition Impairment is the leading disease that impacts US citizens
+            right after heart disease and cancer.</strong> For adults over the age of 25,
+            statistics show that 1 in 4 people have some level of cognition
+            impairment, though many may not even be aware of their own possible
+            impairments. The market for people seeking cognition help is
+            astronomically greater than what it is portrayed to be by general
+            medical media. <br /><br />
+            In our current medical realm, Mild Cognitive Impairment (MCI) can
+            only be diagnosed with the use of an MRI scan paired with a
+            radiologist analysis -- this process can take up to two weeks to and
+            can cost over $4,000 for just one scan and reading.<br /><br />
+          </p>
+          <br />
+          <h1 class="cogniteIdea label">Solution</h1>
+          <p class="cogniteIdea information">
+            <strong class="emphasize">Cognite is an app targeted to those who suffer from any variation of
+            a cognitive disorder.</strong> The app gives patients their risk factor of
+            having a cognitive disorder after a two-minute speaking test.
+            <br /><br />
+            Our research (below) outlines how Natural Language Processing (NLP)
+            can be used to reach a diagnosis in a fraction of the time it takes
+            current methodologies of MCI diagnosis.
+          </p>
+        </div>
+        <img
+          class="cogniteResearchPoster"
+          src="https://cdn.glitch.com/6e343b56-ce02-4a34-a699-eefc7e6c81a4%2FScreen%20Shot%202020-07-19%20at%203.53.58%20PM.png?v=1595192048368"
+          alt="Machine Learning Research Poster"
+        />
+        
+         <!-- video of prototype-->
+        <br /><br /><br />
+          </div>
+          <div class="workText">
+          <h1 class="cogniteIdea label">App Prototype</h1>
+          </div>
+          <div class="videoDiv">
+            <video width="100%" controls autoplay loop>
+              <source src="https://cdn.glitch.com/6e343b56-ce02-4a34-a699-eefc7e6c81a4%2FScreen%20Recording%202020-07-21%20at%202.37.47%20PM.mov?v=1595362365929" type="video/mp4">
+              <source src="https://cdn.glitch.com/6e343b56-ce02-4a34-a699-eefc7e6c81a4%2FScreen%20Recording%202020-07-21%20at%202.37.47%20PM.mov?v=1595362365929" type="video/ogg">
+              Your browser does not support HTML video.
+            </video>
+          </div>
+
+        <div class="workText">
+          <p class="cogniteIdea information">
+            <br />There are a few key features that I wanted to make sure
+            to implement in Cognite.
+          </p>
+        </div>
+        <!-- graphic -->
+        <div class="graphics">
+          <img
+            src="https://cdn.glitch.com/6e343b56-ce02-4a34-a699-eefc7e6c81a4%2FScreen%20Shot%202020-07-21%20at%208.56.56%20AM.png?v=1595339826444"
+            alt="Cognite Diagnosis"
+            class="workGraphic"
+          />
+          <br /><br />
+          <img
+            src="https://cdn.glitch.com/6e343b56-ce02-4a34-a699-eefc7e6c81a4%2FScreen%20Shot%202020-07-21%20at%208.58.09%20AM.png?v=1595339898490"
+            alt="Cognite Built-In Aid"
+            class="workGraphic"
+          />
+          <br /><br />
+          <img
+            src="https://cdn.glitch.com/6e343b56-ce02-4a34-a699-eefc7e6c81a4%2FScreen%20Shot%202020-07-21%20at%208.58.50%20AM.png?v=1595339938680"
+            alt="Cognite Design"
+            class="workGraphic"
+          />
+        
+      </div>
+      <br /><br /><br />
+      <div class="workText">
+          <p class="leafIdea information">
+            Linked is our
+            <strong class="emphasize"
+              ><a
+                href="https://github.com/connieashleyxu/MachineLearningResearch"
+                target="_blank"
+                >GitHub repo</a
+              ></strong
+            >
+            for Cognite.
+          </p>
+        </div>
+    </div>
+
+    <!-- footer -->
+    <footer class="footer">
+      <p class="socialMedia">
+        <a
+          href="https://www.linkedin.com/in/connie-xu-712564184/"
+          target="_blank"
+          class="fa fa-linkedin"
+        ></a>
+        <a
+          href="https://github.com/connieashleyxu"
+          target="_blank"
+          class="fa fa-github"
+        ></a>
+        <a
+          href="https://www.behance.net/conniexu2"
+          target="_blank"
+          class="fa fa-behance"
+        ></a>
+        <a
+          href="https://dribbble.com/connieashleyxu"
+          target="_blank"
+          class="fa fa-dribbble"
+        ></a>
+        <a
+          href="https://www.instagram.com/connieashleyxu/"
+          target="_blank"
+          class="fa fa-instagram"
+        ></a>
+      </p>
+
+      <button
+        onclick="topFunction()"
+        id="myBtn"
+        title="Go to top"
+        class="upPage"
+      >
+        ⇧
+      </button>
+    </footer>
+
+    <!-- header.logo -->
+    <header class="header" id="myHeader">
+      <div class="header">
+        <div class="progress-container">
+          <div class="progress-bar" id="myBar"></div>
+        </div>
+      </div>
+      <!-- nav bar -->
+      <a href="/index.html"><img
+          src="https://cdn.glitch.com/6e343b56-ce02-4a34-a699-eefc7e6c81a4%2FConnie_Logo%202.png?v=1603325602341"
+          alt="logo"
+          class="logoGif"
+                                                /></a>
+      <nav>
+        <div class="nav-bar-options">
+          <button class="option">
+            <a href="/index.html" class="option">Work</a>
+          </button>
+          <button class="option">
+            <a href="/about.html" class="option">About</a>
+          </button>
+        </div>
+      </nav>
+    </header>
+    
+    <script>
+// When the user scrolls the page, execute myFunction 
+window.onscroll = function() {myFunction()};
+
+function myFunction() {
+  var winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+  var height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+  var scrolled = (winScroll / height) * 100;
+  document.getElementById("myBar").style.width = scrolled + "%";
+}
+</script>
+  </body>
+</html>
