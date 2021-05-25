@@ -169,3 +169,12 @@ body {
 li {
   list-style-type: none;
 }
+
+.footer-love {
+  text-align:right;
+  margin: 50px;
+}
+
+.small {
+  font-size: 12px;
+}
