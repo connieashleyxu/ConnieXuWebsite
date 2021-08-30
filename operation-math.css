@@ -292,4 +292,7 @@
 		 left: 100%;
 	}
 }
- 
+
+.images {
+  width: 100vh;
+}
