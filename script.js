@@ -1,4 +1,37 @@
-//typewriter effect
+/*
+  background color generator
+*/
+$(document).ready(function(){
+  var colors = ["#CF654E","#CF4E9C","#604DD7", "#579CDF", "#55CE8D"];                
+  var rand = Math.floor(Math.random()*colors.length);           
+  $('#opening-background').css("background-color", colors[rand]);
+});
+
+/*
+  text reveal
+*/
+
+$(document).ready(function() {
+  $(".title").lettering();
+});
+
+$(document).ready(function() {
+  animation();
+}, 10);
+
+
+function animation() {
+  var title1 = new TimelineMax();
+  title1.to(".button", 0, {visibility: 'hidden', opacity: 0})
+  title1.staggerFromTo(".title span", 0.5, 
+  {ease: Back.easeOut.config(1.7), opacity: 0, bottom: -80},
+  {ease: Back.easeOut.config(1.7), opacity: 1, bottom: 0}, 0.05);
+  title1.to(".button", 0.2, {visibility: 'visible' ,opacity: 1})
+}
+
+/*
+  typewriter text
+*/
 var TxtType = function(el, toRotate, period) {
         this.toRotate = toRotate;
         this.el = el;
@@ -52,162 +85,107 @@ var TxtType = function(el, toRotate, period) {
         // INJECT CSS
         var css = document.createElement("style");
         css.type = "text/css";
-        css.innerHTML = ".typewrite > .wrap { border-right: 0.08em solid #282B2C}";
+        css.innerHTML = ".typewrite > .wrap { border-right: 0.08em solid #FFF}";
         document.body.appendChild(css);
     };
 
-//organize portfolio categories
-filterSelection("all")
-function filterSelection(c) {
-  var x, i;
-  x = document.getElementsByClassName("column");
-  if (c == "all") c = "";
-  for (i = 0; i < x.length; i++) {
-    w3RemoveClass(x[i], "show");
-    if (x[i].className.indexOf(c) > -1) w3AddClass(x[i], "show");
-  }
+/*
+  tinder swipe cards
+*/
+'use strict';
+
+var tinderContainer = document.querySelector('.tinder');
+var allCards = document.querySelectorAll('.tinder--card');
+var nope = document.getElementById('nope');
+var love = document.getElementById('love');
+
+function initCards(card, index) {
+  var newCards = document.querySelectorAll('.tinder--card:not(.removed)');
+
+  newCards.forEach(function (card, index) {
+    card.style.zIndex = allCards.length - index;
+    card.style.transform = 'scale(' + (20 - index) / 20 + ') translateY(-' + 30 * index + 'px)';
+    card.style.opacity = (10 - index) / 10;
+  });
+  
+  tinderContainer.classList.add('loaded');
 }
 
-function w3AddClass(element, name) {
-  var i, arr1, arr2;
-  arr1 = element.className.split(" ");
-  arr2 = name.split(" ");
-  for (i = 0; i < arr2.length; i++) {
-    if (arr1.indexOf(arr2[i]) == -1) {element.className += " " + arr2[i];}
-  }
-}
+initCards();
 
-function w3RemoveClass(element, name) {
-  var i, arr1, arr2;
-  arr1 = element.className.split(" ");
-  arr2 = name.split(" ");
-  for (i = 0; i < arr2.length; i++) {
-    while (arr1.indexOf(arr2[i]) > -1) {
-      arr1.splice(arr1.indexOf(arr2[i]), 1);     
+allCards.forEach(function (el) {
+  var hammertime = new Hammer(el);
+
+  hammertime.on('pan', function (event) {
+    el.classList.add('moving');
+  });
+
+  hammertime.on('pan', function (event) {
+    if (event.deltaX === 0) return;
+    if (event.center.x === 0 && event.center.y === 0) return;
+
+    tinderContainer.classList.toggle('tinder_love', event.deltaX > 0);
+    tinderContainer.classList.toggle('tinder_nope', event.deltaX < 0);
+
+    var xMulti = event.deltaX * 0.03;
+    var yMulti = event.deltaY / 80;
+    var rotate = xMulti * yMulti;
+
+    event.target.style.transform = 'translate(' + event.deltaX + 'px, ' + event.deltaY + 'px) rotate(' + rotate + 'deg)';
+  });
+
+  hammertime.on('panend', function (event) {
+    el.classList.remove('moving');
+    tinderContainer.classList.remove('tinder_love');
+    tinderContainer.classList.remove('tinder_nope');
+
+    var moveOutWidth = document.body.clientWidth;
+    var keep = Math.abs(event.deltaX) < 80 || Math.abs(event.velocityX) < 0.5;
+
+    event.target.classList.toggle('removed', !keep);
+
+    if (keep) {
+      event.target.style.transform = '';
+    } else {
+      var endX = Math.max(Math.abs(event.velocityX) * moveOutWidth, moveOutWidth);
+      var toX = event.deltaX > 0 ? endX : -endX;
+      var endY = Math.abs(event.velocityY) * moveOutWidth;
+      var toY = event.deltaY > 0 ? endY : -endY;
+      var xMulti = event.deltaX * 0.03;
+      var yMulti = event.deltaY / 80;
+      var rotate = xMulti * yMulti;
+
+      event.target.style.transform = 'translate(' + toX + 'px, ' + (toY + event.deltaY) + 'px) rotate(' + rotate + 'deg)';
+      initCards();
     }
-  }
-  element.className = arr1.join(" ");
-}
-
-
-// Add active class to the current button (highlight it)
-var btnContainer = document.getElementById("myBtnContainer");
-var btns = btnContainer.getElementsByClassName("btn");
-for (var i = 0; i < btns.length; i++) {
-  btns[i].addEventListener("click", function(){
-    var current = document.getElementsByClassName("active");
-    current[0].className = current[0].className.replace(" active", "");
-    this.className += " active";
   });
+});
+
+function createButtonListener(love) {
+  return function (event) {
+    var cards = document.querySelectorAll('.tinder--card:not(.removed)');
+    var moveOutWidth = document.body.clientWidth * 1.5;
+
+    if (!cards.length) return false;
+
+    var card = cards[0];
+
+    card.classList.add('removed');
+
+    if (love) {
+      card.style.transform = 'translate(' + moveOutWidth + 'px, -100px) rotate(-30deg)';
+    } else {
+      card.style.transform = 'translate(-' + moveOutWidth + 'px, -100px) rotate(30deg)';
+    }
+
+    initCards();
+
+    event.preventDefault();
+  };
 }
 
-//button scroll to top
-//Get the button
-var mybutton = document.getElementById("myBtn");
+var nopeListener = createButtonListener(false);
+var loveListener = createButtonListener(true);
 
-// When the user scrolls down 20px from the top of the document, show the button
-window.onscroll = function() {scrollFunction()};
-
-function scrollFunction() {
-  if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-    mybutton.style.display = "block";
-  } else {
-    mybutton.style.display = "none";
-  }
-}
-
-// When the user clicks on the button, scroll to the top of the document
-function topFunction() {
-  document.body.scrollTop = 0;
-  document.documentElement.scrollTop = 0;
-}
-
-//button down scroll to div index.work page
-function scrollDiv() {
-  var elmnt = document.getElementById("introBrief");
-  elmnt.scrollIntoView();
-}
-
-//button down scroll to div cognite
-function cogniteScroll() {
-  var elmnt = document.getElementById("cogniteAbout");
-  elmnt.scrollIntoView();
-}
-
-//button down scroll to das cognite
-function dasScroll() {
-  var elmnt = document.getElementById("dasAbout");
-  elmnt.scrollIntoView();
-}
-
-//button down scroll to leaf cognite
-function leafScroll() {
-  var elmnt = document.getElementById("leafAbout");
-  elmnt.scrollIntoView();
-}
-
-//button down scroll to div drill
-function drillScroll() {
-  var elmnt = document.getElementById("drillAbout");
-  elmnt.scrollIntoView();
-}
-
-//button down scroll to div collaboratively
-function collabScroll() {
-  var elmnt = document.getElementById("collabAbout");
-  elmnt.scrollIntoView();
-}
-
-//button down scroll to div grandmail
-function grandmailScroll() {
-  var elmnt = document.getElementById("grandmailAbout");
-  elmnt.scrollIntoView();
-}
-
-//button down scroll to div aero
-function aeroScroll() {
-  var elmnt = document.getElementById("aeroAbout");
-  elmnt.scrollIntoView();
-}
-
-
-//button down scroll to div glow
-function glowScroll() {
-  var elmnt = document.getElementById("glowAbout");
-  elmnt.scrollIntoView();
-}
-
-//button down scroll to div mindful minutes
-function mindfulMinutesScroll() {
-  var elmnt = document.getElementById("mindfulMinutesAbout");
-  elmnt.scrollIntoView();
-}
-
-//button down scroll to div tbo
-function tboScroll() {
-  var elmnt = document.getElementById("tboAbout");
-  elmnt.scrollIntoView();
-}
-
-//button down scroll to div tea time
-function teaTimeScroll() {
-  var elmnt = document.getElementById("teaTimeAbout");
-  elmnt.scrollIntoView();
-}
-
-//button down scroll to div waiveTheGrain
-function waiveTheGrainScroll() {
-  var elmnt = document.getElementById("waiveTheGrainAbout");
-  elmnt.scrollIntoView();
-}
-
-//maintain active navbar
-var header = document.getElementById("nav-bar-options");
-var btns = header.getElementsByClassName("options");
-for (var i = 0; i < btns.length; i++) {
-  btns[i].addEventListener("click", function() {
-  var current = document.getElementsByClassName("active");
-  current[0].className = current[0].className.replace(" active", "");
-  this.className += " active";
-  });
-}
+nope.addEventListener('click', nopeListener);
+love.addEventListener('click', loveListener);

@@ -1,243 +1,166 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-XX5P66S1LC"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-XX5P66S1LC');
-</script>
-    
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-    <!-- favicon-->
-    <title>Connie Xu - Portfolio</title>
+     <!-- favicon-->
+    <title>Connie Xu | Portfolio</title>
     <!-- HERE IMG -->
 
     <link
       rel="icon"
       type="image/png"
-      href="https://cdn.glitch.com/6e343b56-ce02-4a34-a699-eefc7e6c81a4%2FConnie_Logo%202.png?v=1603325602341"
+      href="https://cdn.glitch.com/a725ba3b-f97b-43d7-91bd-88ffa3289f95%2FConnie_Logo%203.png?v=1630262434474"
     />
     
 <meta
       name="description"
       content="Connie Xu's portfolio showcasing her skillset as a designer, coder, and entrepreneur."
     />
-    <!-- import the webpage's stylesheet -->
+
+    <!-- Import fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Questrial&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Import the webpage's stylesheet -->
     <link rel="stylesheet" href="/style.css" />
 
-    <!-- import the webpage's javascript file -->
-    <script src="/script.js" defer></script>
-
-    <!-- import social media footer -->
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
-    />
-
-    <!-- font links -->
-    <link
-      href="https://fonts.googleapis.com/css2?family=Karla&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Karla:wght@700&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="preconnect" href="https://fonts.gstatic.com">
-<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300&display=swap" rel="stylesheet">
+    <!-- Import the webpage's javascript file -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.18.0/TweenMax.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lettering.js/0.7.0/jquery.lettering.min.js"></script>
+    <script src="script.js" defer></script>
   </head>
+
   <body>
-    <!-- content -->
-    <section class="work">
-      <div class="opening">
-        <img
-          src="https://cdn.glitch.com/6e343b56-ce02-4a34-a699-eefc7e6c81a4%2F%C2%A9connieashleyxu.png?v=1621971346101"
-          alt="Picture of Connie"
-          class="connieImage"
-        />
-        <p class="bottomArrow" onclick="scrollDiv()">
-          ╲╱
+    <div id="opening-background">
+      <header class="header" id="myHeader">
+        <!-- nav bar -->
+        <a href="/index.html" class="option"
+          ><img
+            src="https://cdn.glitch.com/a725ba3b-f97b-43d7-91bd-88ffa3289f95%2FConnie_Logo%202.gif?v=1630188626644"
+            alt="Connie Xu"
+            class="logo-gif"
+        /></a>
+        <nav>
+          <div class="nav-bar-options">
+            <button class="option active">
+              <a href="/index.html" class="option active">Work</a>
+            </button>
+            <button class="option">
+              <a href="/about.html" class="option ">About</a>
+            </button>
+            <button class="option">
+              <a href="/contact-me.html" class="option ">Contact Me</a>
+            </button>
+          </div>
+        </nav>
+      </header>
+
+      <section class="container abc">
+        <h1>
+          <span class="title">Achiever</span> <br>
+          <span class="title">Builder</span> <br>
+          <span class="title">Creator</span>
+        </h1>
+      </section>
+
+    </div>
+
+    <div id="intro-brief">
+      <center>
+        <p>
+          🙋🏻‍♀️ Hi, I'm Connie Xu! I'm a student at USC studying
+          <a
+            class="typewrite"
+            data-period="2000"
+            data-type='[ "arts", "technology", "business of innovation" ]'
+          >
+            <span class="wrap"></span>
+          </a>
         </p>
-      </div>
+      </center>
+    </div>
 
-      <div class="introToNav">
-        <div class="introBrief" id="introBrief">
-          <p>
-            🙋‍♀️ Hi, I'm Connie Xu -- a student at USC studying
-            <a
-              class="typewrite"
-              data-period="2000"
-              data-type='[ "arts", "technology", "business of innovation" ]'
-            >
-              <span class="wrap"></span>
-            </a>
-          </p>
-        </div>
-
-        <!-- organize categories -->
-        <div class="parentCategory">
-          <div class="category" id="myBtnContainer">
-            <button class="btn active" onclick="filterSelection('all')">
-              Show all
-            </button>
-            <button class="btn" onclick="filterSelection('coding')">
-              Coder
-            </button>
-            <button class="btn" onclick="filterSelection('uiux')">Designer</button>
-            <button class="btn" onclick="filterSelection('branding')">
-              Entrepreneur
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- usual updates here -->
-      <div class="actualSample">
-        <div class="row">
-          <div class="column uiux branding coding">
-            <div class="content">
-              <a href="/harmonize/harmonize.html">
-                <img
-                  src="https://cdn.glitch.com/6e343b56-ce02-4a34-a699-eefc7e6c81a4%2Flogos%20of%20portfolio.png?v=1621974099957"
-                  alt="Harmonize"
-                  style="width:100%"
-                />
-                <!-- <h1 class="centered">Daily Awareness Society</h1> -->
-              </a>
-            </div>
-          </div>
-          <div class="column uiux branding coding">
-            <div class="content">
-              <a href="/leaf/leaf.html">
-                <img
-                  src="https://cdn.glitch.com/6e343b56-ce02-4a34-a699-eefc7e6c81a4%2Flogos%20of%20portfolio%20(2).png?v=1608270196329"
-                  alt="Leaf"
-                  style="width:100%"
-                />
-                <!-- <h1 class="centered">Daily Awareness Society</h1> -->
-              </a>
-            </div>
-          </div>
-          <div class="column uiux branding coding">
-            <div class="content">
-              <a href="/das/das.html">
-                <img
-                  src="https://cdn.glitch.com/6e343b56-ce02-4a34-a699-eefc7e6c81a4%2Flogos%20of%20portfolio%20(3).png?v=1608270528750"
-                  alt="Daily Awareness Society"
-                  style="width:100%"
-                />
-                <!-- <h1 class="centered">Daily Awareness Society</h1> -->
-              </a>
-            </div>
-          </div>          
-          <div class="column coding uiux">
-            <div class="content">
-              <a href="/cognite/cognite.html">
-                <img
-                  src="https://cdn.glitch.com/6e343b56-ce02-4a34-a699-eefc7e6c81a4%2Flogos%20of%20portfolio%20(4).png?v=1608270604505"
-                  alt="Cognite"
-                  style="width:100%"
-                />
-                <!-- <h1 class="centered">Cognite</h1> -->
-              </a>
-            </div>
-          </div>
-          <div class="column coding uiux">
-            <div class="content">
-              <a href="/mindfulMinutes/mindfulMinutes.html">
-                <img
-                  src="https://cdn.glitch.com/6e343b56-ce02-4a34-a699-eefc7e6c81a4%2F3.png?v=1603232845559"
-                  alt="Mindful Minutes"
-                  style="width:100%"
-                />
-                <!-- <h1 class="centered">Mindful Minutes</h1> -->
-              </a>
-            </div>
-          </div>
-
-         
-          <div class="column uiux">
-            <div class="content">
-              <a href="/personal/personal.html">
-                <img
-                  src="https://cdn.glitch.com/6e343b56-ce02-4a34-a699-eefc7e6c81a4%2F8.png?v=1603232845862"
-                  alt="Personal"
-                  style="width:100%"
-                />
-                <!-- <h1 class="centered">Personal</h1> -->
-              </a>
-            </div>
-          </div>
-          <!-- END GRID -->
-          </div>
-        </div>
-      
-    </section>
-
-    <!-- header.logo -->
-    <header class="header" id="myHeader">
-      <!-- nav bar -->
-      <nav>
-        <img
-          src="https://cdn.glitch.com/6e343b56-ce02-4a34-a699-eefc7e6c81a4%2FConnie_Logo%202.gif?v=1603325337587"
-          alt="logo"
-          class="logoGif"
+    <div class="tooltip-operation-math">
+      <a href="operation-math.html"
+        ><img
+          src="https://cdn.glitch.com/a725ba3b-f97b-43d7-91bd-88ffa3289f95%2FOperationMath.png?v=1630183698188"
+          alt="Operation Math"
+          class="project"
+          id="operation-math"
         />
-        <div class="nav-bar-options">
-          <button class="option active">
-            <a href="/index.html" class="option active">Work</a>
-          </button>
-          <button class="option">
-            <a href="/about.html" class="option">About</a>
-          </button>
-        </div>
-      </nav>
-    </header>
-    <!-- footer -->
-    <footer class="footer">
-      <p class="socialMedia">
-        <a
-          href="https://www.linkedin.com/in/connie-xu-712564184/"
-          target="_blank"
-          class="fa fa-linkedin"
-        ></a>
-        <a
-          href="https://github.com/connieashleyxu"
-          target="_blank"
-          class="fa fa-github"
-        ></a>
-        <a
-          href="https://www.behance.net/conniexu2"
-          target="_blank"
-          class="fa fa-behance"
-        ></a>
-        <a
-          href="https://dribbble.com/connieashleyxu"
-          target="_blank"
-          class="fa fa-dribbble"
-        ></a>
-        <a
-          href="https://www.instagram.com/connieashleyxu/"
-          target="_blank"
-          class="fa fa-instagram"
-        ></a>
-      </p>
+      </a>
+      <span class="tooltiptext">Operation Math</span>
+    </div>
 
-      <button
-        onclick="topFunction()"
-        id="myBtn"
-        title="Go to top"
-        class="upPage"
-      >
-        ⇧
-      </button>
-    </footer>
+    <div class="tooltip-harmonize">
+      <a href="harmonize.html"
+        ><img
+          src="https://cdn.glitch.com/a725ba3b-f97b-43d7-91bd-88ffa3289f95%2FHarmonize.png?v=1630187347284"
+          alt="Harmonize"
+          class="project"
+          id="harmonize"
+        />
+      </a>
+      <span class="tooltiptext">Harmonize</span>
+    </div>
+
+    <div class="tooltip-leaf">
+      <a href="leaf.html"
+        ><img
+          src="https://cdn.glitch.com/a725ba3b-f97b-43d7-91bd-88ffa3289f95%2FHappy_Bear.png?v=1630194958073"
+          alt="Leaf"
+          class="project"
+          id="leaf"
+        />
+      </a>
+      <span class="tooltiptext">Leaf</span>
+    </div>
+    
+    <div class="tooltip-blob">
+      <a href="blob.html"
+        ><img
+          src="https://cdn.glitch.com/a725ba3b-f97b-43d7-91bd-88ffa3289f95%2FBlob.png?v=1630264864801"
+          alt="Blob"
+          class="project"
+          id="blob"
+        />
+      </a>
+      <span class="tooltiptext">Blob Experiments</span>
+    </div>
+    
+    <div class="tooltip-emoji">
+      <a href="emoji.html"
+        ><img
+          src="https://cdn.glitch.com/a725ba3b-f97b-43d7-91bd-88ffa3289f95%2FNewmojis%204.png?v=1630273638756"
+          alt="Newmoji"
+          class="project"
+          id="emoji"
+        />
+      </a>
+      <span class="tooltiptext">Newmojis</span>
+    </div>
+    
+    <div class="tooltip-network">
+      <a href="dot.html"
+        ><img
+          src="https://cdn.glitch.com/a725ba3b-f97b-43d7-91bd-88ffa3289f95%2FNewmojis%206.png?v=1630291666518"
+          alt="Network Experience"
+          class="project"
+          id="network"
+        />
+      </a>
+      <span class="tooltiptext">Network Experience</span>
+    </div>
   </body>
 </html>

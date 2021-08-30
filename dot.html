@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Network Experience</title>
+    <link
+      rel="icon"
+      type="image/png"
+      href="https://cdn.glitch.com/a725ba3b-f97b-43d7-91bd-88ffa3289f95%2FConnie_Logo%203.png?v=1630262434474"
+    />
+
+    <meta
+      name="description"
+      content="Network Experience; understanding the power of collaboration."
+    />
+
+    <!-- Import fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Questrial&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Import the webpage's stylesheet -->
+    <link rel="stylesheet" href="/dot.css" />
+
+    <!-- Import the webpage's javascript file -->
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://unpkg.com/d3@5.15.1/dist/d3.min.js"></script>
+    <script src="script.js" defer></script>
+  </head>
+
+  <body>
+    <header class="header" id="myHeader">
+      <!-- nav bar -->
+      <a href="/index.html" class="option"
+        ><img
+          src="https://cdn.glitch.com/a725ba3b-f97b-43d7-91bd-88ffa3289f95%2FConnie_Logo%204.png?v=1630264542936"
+          alt="Connie Xu"
+          class="logo-gif"
+      /></a>
+      <nav>
+        <div class="nav-bar-options">
+          <button class="option">
+            <a href="/index.html" class="option">Work</a>
+          </button>
+          <button class="option">
+            <a href="/about.html" class="option ">About</a>
+          </button>
+          <button class="option">
+            <a href="/contact-me.html" class="option ">Contact Me</a>
+          </button>
+        </div>
+      </nav>
+    </header>
+
+    <div class="wrapper">
+      <center>
+        <a href="choice.html"><button data-type="duck" class="button">Let's Go</button></a>
+      </center>
+    </div>
+    <span class="preloader"></span>
+  </body>
+  <script>
+    // use the hsl() format with a hard coded lightness and saturation value
+    // the hue depends on the position of the cursor
+    const initialHue = 0;
+    const lightness = 95;
+    const saturation = 55;
+    const initialColor = `hsl(${initialHue}, ${lightness}%, ${saturation}%)`;
+    const data = [{ color: initialColor }];
+
+    const size = 500;
+    const circleSize = 6;
+
+    const svg = d3
+      .select("body")
+      .append("svg")
+      .attr("viewBox", `${-size / 2} ${-size / 2} ${size} ${size}`)
+      .attr("width", size)
+      .attr("height", size);
+
+    const circles = 50;
+    svg
+      .selectAll("circle")
+      .data(Array(circles).fill())
+      .enter()
+      .append("circle")
+      .attr(
+        "fill",
+        (d, i, { length }) =>
+          `hsl(${(360 / length) * i}, ${lightness}%, ${saturation}%)`
+      )
+      .attr(
+        "transform",
+        (d, i, { length }) =>
+          `rotate(${(360 / length) * i}) translate(0 ${-size / 2 +
+            circleSize}) rotate(${(360 / length) * i * -1})`
+      )
+      .attr("r", circleSize);
+
+    // triangular cursor
+    // by default pointing downwards
+    const cursor = svg
+      .append("path")
+      .attr("d", "M -15 -10 h 30 l -15 30 z")
+      .attr("fill", "none")
+      .attr("stroke-width", 5)
+      .attr("stroke-linecap", "round")
+      .attr("stroke-linejoin", "round")
+      .attr("stroke", initialColor);
+
+    // scale the cursor into view
+    // ! if you add the instruction to the previous block, the cursor holds a reference to the transition and not the element
+    cursor
+      .attr("transform", "scale(0)")
+      .transition()
+      .attr("transform", "scale(1)");
+
+    // group for the simulation
+    const group = svg.append("g");
+
+    // function called on.tick
+    function plotData(data) {
+      group
+        .selectAll("circle")
+        .data(data)
+        .join(
+          enter => {
+            enter
+              .append("circle")
+              .attr("cx", d => d.x)
+              .attr("cy", d => d.y)
+              .attr("fill", d => d.color || "currentColor")
+              .attr("r", 0)
+              .transition()
+              .attr("r", circleSize);
+          },
+          update => {
+            update.attr("cx", d => d.x).attr("cy", d => d.y);
+            // necessary given the transtion on .enter
+            return undefined;
+          }
+        );
+    }
+
+    // first simulation
+    // since there's a single data point, no forces are necessary
+    const simulation = d3
+      .forceSimulation(data)
+      .on("tick", () => plotData(data));
+
+    // INTERACTION
+    // following the mousemove event update the position and color of the cursor
+    svg.on("mousemove", function() {
+      const [x, y] = d3.mouse(this);
+
+      let angle = (Math.atan(Math.abs(x) / Math.abs(y)) * 180) / Math.PI;
+      if (x < 0 && y < 0) {
+        angle = 360 - angle;
+      }
+      if (x < 0 && y > 0) {
+        angle += 180;
+      } else if (x > 0 && y > 0) {
+        angle = 180 - angle;
+      }
+
+      const hue = Math.round(angle);
+      const color = `hsl(${hue}, ${lightness}%, ${saturation}%)`;
+
+      cursor
+        .attr("transform", `translate(${x} ${y}) rotate(${angle})`)
+        .attr("stroke", color);
+
+      // add data-* attributes for the click event
+      // this way you don't have to find the values anew
+      svg.attr("data-x", x);
+      svg.attr("data-y", y);
+      svg.attr("data-color", color);
+    });
+
+    svg.on("click", function(e) {
+      // ! x and y are returned as string, so be sure to parse the values
+      const { x, y, color } = this.dataset;
+
+      data.push({ x: parseFloat(x), y: parseFloat(y), color });
+
+      // restart the simulation with the new dataset
+      // set up forces to push the elements toward the center
+      simulation
+        .nodes(data)
+        .alpha(1)
+        .force("center", d3.forceCenter(0, 0))
+        .force("forceX", d3.forceX(0).strength(0.1))
+        .force("forceY", d3.forceY(0).strength(0.1))
+        .force("charge", d3.forceManyBody().strength(-40))
+        .force("collision", d3.forceCollide().radius(circleSize * 2))
+        .restart();
+    });
+  </script>
+
+  <script>
+    function pop(e) {
+      let amount = 30;
+      switch (e.target.dataset.type) {
+        case "shadow":
+        case "line":
+          amount = 60;
+          break;
+      }
+      // Quick check if user clicked the button using a keyboard
+      if (e.clientX === 0 && e.clientY === 0) {
+        const bbox = e.target.getBoundingClientRect();
+        const x = bbox.left + bbox.width / 2;
+        const y = bbox.top + bbox.height / 2;
+        for (let i = 0; i < 30; i++) {
+          // We call the function createParticle 30 times
+          // We pass the coordinates of the button for x & y values
+          createParticle(x, y, e.target.dataset.type);
+        }
+      } else {
+        for (let i = 0; i < amount; i++) {
+          createParticle(
+            e.clientX,
+            e.clientY + window.scrollY,
+            e.target.dataset.type
+          );
+        }
+      }
+    }
+    function createParticle(x, y, type) {
+      const particle = document.createElement("particle");
+      document.body.appendChild(particle);
+      let width = Math.floor(Math.random() * 30 + 8);
+      let height = width;
+      let destinationX = (Math.random() - 0.5) * 300;
+      let destinationY = (Math.random() - 0.5) * 300;
+      let rotation = Math.random() * 520;
+      let delay = Math.random() * 200;
+
+      switch (type) {
+        case "duck":
+          particle.style.backgroundImage =
+            "url(https://cdn.glitch.com/a725ba3b-f97b-43d7-91bd-88ffa3289f95%2FNewmojis%206.png?v=1630291666518)";
+          break;
+      }
+
+      particle.style.width = `${width}px`;
+      particle.style.height = `${height}px`;
+      const animation = particle.animate(
+        [
+          {
+            transform: `translate(-50%, -50%) translate(${x}px, ${y}px) rotate(0deg)`,
+            opacity: 1
+          },
+          {
+            transform: `translate(-50%, -50%) translate(${x +
+              destinationX}px, ${y + destinationY}px) rotate(${rotation}deg)`,
+            opacity: 0
+          }
+        ],
+        {
+          duration: Math.random() * 1000 + 5000,
+          easing: "cubic-bezier(0, .9, .57, 1)",
+          delay: delay
+        }
+      );
+      animation.onfinish = removeParticle;
+    }
+    function removeParticle(e) {
+      e.srcElement.effect.target.remove();
+    }
+
+    if (document.body.animate) {
+      document
+        .querySelectorAll("button")
+        .forEach(button => button.addEventListener("click", pop));
+    }
+  </script>
+</html>

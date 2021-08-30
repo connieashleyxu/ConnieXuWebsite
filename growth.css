@@ -1,0 +1,49 @@
+.logo-gif {
+  height: 10%;
+  position: absolute;
+  top: 1%;
+  left: 0.5%;
+  z-index: 1;
+}
+
+.nav-bar-options {
+  display: flex;
+  z-index: 1;
+  justify-content: flex-end;
+  text-transform: uppercase;
+  list-style-type: none;
+  margin-top: 1%;
+  margin-right: 3%;
+}
+
+.option {
+  font-family: 'Roboto', sans-serif;
+  border: none;
+  outline: none;
+  padding: 10px 20px 0px 0px;
+  background-color: transparent;
+  color: #FFF;
+  z-index: 1;
+  cursor: pointer;
+  text-transform: uppercase;
+  font-size: 15px;
+  text-decoration: none;
+}
+
+.option:hover {
+  cursor: pointer;
+  z-index: 1;
+}
+
+.active {
+  text-decoration: underline;
+  cursor: default;
+  z-index: 1;
+}
+
+body {
+  background-color: #000;
+  margin:0;
+  padding:0;
+  border-width:0;
+}

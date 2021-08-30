@@ -1,0 +1,135 @@
+a {
+  text-decoration:none;
+}
+
+.logo-gif {
+  height: 10%;
+  position: absolute;
+  top: 1%;
+  left: 0.5%;
+}
+
+.nav-bar-options {
+  display: flex;
+  justify-content: flex-end;
+  text-transform: uppercase;
+  list-style-type: none;
+  margin-top: 1%;
+  margin-right: 3%;
+}
+
+.option {
+  font-family: "Roboto", sans-serif;
+  border: none;
+  outline: none;
+  padding: 10px 20px 0px 0px;
+  background-color: transparent;
+  color: #FFF;
+  cursor: pointer;
+  text-transform: uppercase;
+  font-size: 15px;
+  text-decoration: none;
+}
+
+.option:hover {
+  cursor: pointer;
+}
+
+.active {
+  text-decoration: underline;
+  cursor: default;
+}
+
+body {
+  background: #604ED6;
+}
+.frame {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 400px;
+  height: 400px;
+  margin-top: -200px;
+  margin-left: -200px;
+  border-radius: 2px;
+  box-shadow: 0.5rem 1rem 1rem rgba(0, 0, 0, 0.6);
+  overflow: hidden;
+  background: #efefef;
+  color: #FFF;
+  font-family: "Questrial", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.center {
+  position: absolute;
+  top: 49.5%;
+  left: 0;
+  right: 0;
+  margin-top: -22.5px;
+  padding-top: 5px;
+  padding-left: 20%;
+  background: #1C1C1C;
+}
+.carousel {
+  position: relative;
+  width: 100%;
+  text-align: center;
+  font-size: 30px;
+  line-height: 45px;
+  height: 45px;
+}
+.carousel .pre {
+  position: absolute;
+  top: 0;
+  right: 52%;
+  height: 45px;
+  text-shadow: 1px 1px 1px #3c2254;
+  font-weight: 300;
+}
+.carousel .change_outer {
+  position: absolute;
+  top: 0;
+  left: 54%;
+  text-align: left;
+  height: 45px;
+  overflow: hidden;
+}
+.carousel .change_outer .change_inner {
+  position: relative;
+  animation: rotate 10s ease-in-out infinite;
+}
+.carousel .change_outer .element {
+  display: block;
+}
+
+@keyframes rotate {
+  10%,
+  15%,
+  100% {
+    transform: translateY(0);
+  }
+  25%,
+  36% {
+    transform: translateY(-45px);
+  }
+  46%,
+  57% {
+    transform: translateY(-90px);
+  }
+  67%,
+  78% {
+    transform: translateY(-135px);
+  }
+  88%,
+  99% {
+    transform: translateY(-180px);
+  }
+}
+
+.learn {
+  color: #604FD5;
+  positon: relative;
+  margin-top: 90%;
+  font-size: 13px;
+}

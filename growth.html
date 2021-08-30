@@ -1,0 +1,3162 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Blob Growth</title>
+    <link
+      rel="icon"
+      type="image/png"
+      href="https://cdn.glitch.com/a725ba3b-f97b-43d7-91bd-88ffa3289f95%2FConnie_Logo%203.png?v=1630262434474"
+    />
+
+    <meta name="description" content="Blob Experiments - Growth." />
+
+    <!-- Import fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Questrial&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Import the webpage's stylesheet -->
+    <link rel="stylesheet" href="/growth.css" />
+
+    <!-- Import the webpage's javascript file -->
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/2.0.2/TweenMax.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="script.js" defer></script>
+  </head>
+
+  <body>
+    <header class="header" id="myHeader">
+      <!-- nav bar -->
+      <a href="/index.html" class="option"
+        ><img
+          src="https://cdn.glitch.com/a725ba3b-f97b-43d7-91bd-88ffa3289f95%2FConnie_Logo%204.png?v=1630264542936"
+          alt="Connie Xu"
+          class="logo-gif"
+      /></a>
+      <nav>
+        <div class="nav-bar-options">
+          <button class="option">
+            <a href="/index.html" class="option">Work</a>
+          </button>
+          <button class="option">
+            <a href="/about.html" class="option ">About</a>
+          </button>
+          <button class="option">
+            <a href="/contact-me.html" class="option ">Contact Me</a>
+          </button>
+        </div>
+      </nav>
+    </header>
+  </body>
+  
+  <script>
+    "use strict";
+
+window.addEventListener("load",function() {
+
+
+  const seeOuterZone = true; // stop drawing a bit inside / outside screen limits
+  const uncentered = true;  // loop search starts at the center of the screen or not
+  const concentric = true;  
+
+// initial values, adjustable with controls
+
+  const tbRelProbaNbPoints = [[0,1,0,0], // allways 1
+                              [0,0,1,0], // allways 2
+                              [0,0,0,1], // allways 3
+                              [0,1,1,0], // 1-2
+                              [0,1,0,1], // 1-3
+                              [0,0,2,1], // 2-3
+                              [0,1,3,1]]; // never 0, same chance 1 and 3, 3 times more chances to choose 2
+  const probaNames = ['1', '2', '3', '1-2', '1-3', '2-3', '1-2-3'];
+  let geometryChoice = 6; // 1-2-3
+
+  let  rayHex = 70; // circumradius of hexagon - general scale of drawing
+  let  speed = 50;  // animation speed
+  let displayGrid = false;
+  let autorun = true;
+  let regularity = 1;
+
+  let palettes = [[],                
+                  ['#222','#444','#666','#888','#AAA','#CCC'],
+                  ['#400','#800','#C00','#F00','#F55','#FAA'],
+                  ['#040','#080','#0C0','#0F0','#5F5','#AFA'],
+                  ['#004','#008','#00C','#00F','#55F','#AAF'],
+                  ['#044','#088','#0CC','#0FF','#5FF','#AFF'],
+                  ['#440','#880','#CC0','#FF0','#FF5','#FFA'],
+                  ['#404','#808','#C0C','#F0F','#F5F','#FAF'],
+                  ['#420','#840','#C60','#F80','#FA5','#FC8'],
+                  ['#4A0000','#DF0000','#FFA5A9','#CAD15E','#2A5800','#EEFF88'],
+                  ['#626500','#B29C27','#FFB400','#FF6334','#BE1F1D','#88FF44'],
+                  ['#840','#C60','#800','#084','#804'],
+                  ['#151C36','#485778','#abb1bc','#FFF8E6','#FBDCC4']
+                 ];
+  let colorNames =['colors', 'grey', 'red', 'green', 'blue',
+                   'cyan', 'yellow', 'purple', 'brown',
+                   'spring', 'summer', 'autumn', 'winter'];
+  let paletteChoice = 0; // colors
+
+
+  let canv, ctx;  
+  let ctxGrid;
+  let maxx, maxy;  // canvas sizes (in pixels)
+  let orgx, orgy;  // position of the center of the 1st ([0][0]) hexagon;
+
+  let nbx, nby;    // number of hexagons horiz. / vert.
+  let grid;     // array of hexagons
+  let tbLoops, cptLoops; // loops array, loops counter
+  let hierar;      // hierarchical structure for loops
+
+  let perpendicular = []; // for easy calculation of perpendiculars to hexagon edges
+  let vertices;    // positions of vertices of one Hexagon, relative to center
+  let tbNbPoints;  // table for choice of nb of points on each side
+  let bgColor;
+  let expandTable;
+  let events = []; // list of messages for 'animate'
+
+// for controls
+  let nRayHex = rayHex;
+  let durmin, durmax;
+  let chosenPalette;
+
+// shortcuts for Math.…
+
+  const mrandom = Math.random;
+  const mfloor = Math.floor;
+  const mround = Math.round;
+  const mceil = Math.ceil;
+  const mabs = Math.abs;
+  const mmin = Math.min;
+  const mmax = Math.max;
+
+  const mPI = Math.PI;
+  const mPIS2 = Math.PI / 2;
+  const m2PI = Math.PI * 2;
+  const msin = Math.sin;
+  const mcos = Math.cos;
+  const matan2 = Math.atan2;
+
+  const mhypot = Math.hypot;
+  const msqrt = Math.sqrt;
+  
+  const rac3   = msqrt(3);
+  const rac3s2 = rac3 / 2;
+  const mPIS3 = Math.PI / 3;
+
+//-----------------------------------------------------------------------------
+// miscellaneous functions
+//-----------------------------------------------------------------------------
+
+  function alea (min, max) {
+// random number [min..max[ . If no max is provided, [0..min[
+
+    if (typeof max == 'undefined') return min * mrandom();
+    return min + (max - min) * mrandom();
+  }
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  function intAlea (min, max) {
+// random integer number [min..max[ . If no max is provided, [0..min[
+
+    if (typeof max == 'undefined') {
+      max = min; min = 0;
+    }
+    return mfloor(min + (max - min) * mrandom());
+  } // intAlea
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  function arrayShuffle (array) {
+/* randomly changes the order of items in an array
+   only the order is modified, not the elements
+*/
+  let k1, temp;
+  for (let k = array.length - 1; k >= 1; --k) {
+    k1 = intAlea(0, k + 1);
+    temp = array[k];
+    array[k] = array[k1];
+    array[k1] = temp;
+    } // for k
+  return array
+  } // arrayShuffle
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  function randomOrder (range) {
+
+  /* returns an array with numbers 0..range-1 in random order */
+    let array = [];
+    for ( let k = 0; k < range; ++k) array[k] = k;
+    return arrayShuffle(array);
+
+  } // randomOrder
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+/* returns intermediate value between v0 and v1,
+  alpha = 0 will return v0, alpha = 1 will return v1
+  values of alpha outside [0,1] may be used to compute points outside the v0-v1 range
+*/
+  function lerp (v0, v1, alpha) {
+
+    return (1 - alpha) * v0 + alpha * v1;
+  } // function lerp;
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+/* returns point based on :
+- an origin point
+- a distance
+- a direction given by two coordinates
+*/
+
+  function dirPoint (porg, dist, dir) {
+
+    let distDir = mhypot (dir[0], dir[1]);
+    return [porg[0] + dist * dir[0] / distDir,
+            porg[1] + dist * dir[1] / distDir];
+
+  } // function dirPoint;
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+/* returns two coordinates representing move from porg to pend
+*/
+
+  function diffPoints (porg, pend) {
+
+    return [pend[0] - porg[0],
+            pend[1] - porg[1]];
+
+  } // function diffPoints;
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+/* returns intermediate point between p0 and p1,
+  alpha = 0 will return p0, alpha = 1 will return p1
+  values of alpha outside [0,1] may be used to compute points outside the p0-p1 segment
+*/
+  function intermediate (p0, p1, alpha) {
+
+    return [(1 - alpha) * p0[0] + alpha * p1[0],
+            (1 - alpha) * p0[1] + alpha * p1[1]];
+  } // function intermediate
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+/* splits bezier curve given by 4 points into two parts
+the division point is given pat coeff alpha (0..1)
+
+Beware : some of the points in returned value really are points of input bezier curve, not clones
+
+*/
+
+function splitBezier(bezier, alpha) {
+  let pa = intermediate (bezier[0], bezier[1] , alpha);
+  let pb = intermediate (bezier[1], bezier[2] , alpha);
+  let pc = intermediate (bezier[2], bezier[3] , alpha);
+  let pd = intermediate (pa, pb, alpha);
+  let pe = intermediate (pb, pc, alpha);
+  let pf = intermediate (pd, pe, alpha);
+  return [[bezier[0], pa, pd, pf], [pf, pe, pc, bezier[3]]];
+
+} // splitBezier
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  function distance (p0, p1) {
+
+/* distance between points */
+
+    return mhypot (p0[0] - p1[0], p0[1] - p1[1]);
+
+  } // function distance
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+/* find first occurence of element in array
+returns index if found
+returns -1 if not found but safe == true
+throws error if not found and safe == false
+*/
+
+  function findIndex (array, element, safe = false) {
+    let idx = array.indexOf(element);
+    if (idx != -1 || safe) return idx;
+    throw ('not found element in array');
+  } // removeFromArray
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// remove first occurence of element from array
+// returns true if successful, false if not found && safe
+
+  function removeFromArray (array, element, safe = false) {
+    let idx = findIndex(array, element, safe);
+    if (idx == -1) return false; // not found
+    array.splice (idx, 1);
+    return true;
+  } // removeFromArray
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// replace first occurence of oldelement in array by newelement
+//
+
+  function replaceInArray (array, oldElement, newElement, safe = false) {
+    let idx = array.indexOf(oldElement);
+    if (idx != -1) {
+      array[idx] = newElement;
+      return true;
+    } 
+    if (! safe) throw ('not found olElement in array');
+    return false;
+  } // replaceInArray
+
+//------------------------------------------------------------------------
+// class Hexagon
+
+function Hexagon (kx, ky) {
+
+  this.kx = kx;
+  this.ky = ky;
+
+} // function Hexagon
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+Hexagon.prototype.size = function() {
+/* computes screen sizes / positions
+*/
+// centre
+  this.xc = orgx + this.kx * 1.5 * rayHex;
+  this.yc = orgy + this.ky * rayHex * rac3;
+  if (this.kx & 1) this.yc -= rayHex * rac3s2; //colonnes impaires, centre un peu plus haut
+
+  this.vertices = [[],[],[],[],[],[]] ;
+
+// x coordinates of this hexagon vertices
+  this.vertices[3][0] = this.xc + vertices[3][0];
+  this.vertices[2][0] = this.vertices[4][0] = this.xc + vertices[2][0];
+  this.vertices[1][0] = this.vertices[5][0] = this.xc + vertices[1][0];;
+  this.vertices[0][0] = this.xc + vertices[0][0];;
+// y coordinates of this hexagon vertices
+  this.vertices[4][1] = this.vertices[5][1] = this.yc + vertices[4][1];
+  this.vertices[0][1] = this.vertices[3][1] = this.yc + vertices[0][1];
+  this.vertices[1][1] = this.vertices[2][1] = this.yc + vertices[1][1];
+
+/* positions of intermediate points on sides */
+/* depends on the number of points on this side */
+  this.points = [];
+  this.nbPPSide.forEach((nbPoints, kcote) => {
+    let p0 = this.vertices[kcote];
+    let p1 = this.vertices[(kcote + 1 ) % 6];
+    switch (nbPoints) {
+      case 0 : break; // no point at all, nothing to compute
+      case 1 :
+        this.points.push(intermediate (p0, p1, 1 / 2));
+        break;
+      case 2 :
+        this.points.push(intermediate (p0, p1, 3 / 8)); // better results than 1/3 and 2/3
+        this.points.push(intermediate (p0, p1, 5 / 8));
+        break;
+      case 3 :
+        this.points.push(intermediate (p0, p1, 9 / 32)); // better results than 1/4, 2/4 and 3/4
+        this.points.push(intermediate (p0, p1, 1 / 2));
+        this.points.push(intermediate (p0, p1, 23 / 32));
+        break;
+    } // switch
+  }); // hexa.nbPPSide.forEach
+
+} // Hexagon.prototype.size
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+Hexagon.prototype.connect = function(kin, kout) {
+  /* manages the 'connectables' property wich tells which points may be connected together
+    without cutting a previously created connection
+/* normally, kin et kout should have different parities */
+
+    let kcon = 0; // index of subset of 'connectables' which contains kin et kout
+    let k0, k1;
+    while (true) {
+      if (kcon >= this.connectables.length) {
+        throw ( 'connecter un point non trouvé dans connectables');
+      }
+      k0 = this.connectables[kcon].indexOf(kin);
+      if (k0 >= 0) {
+        k1 = this.connectables[kcon].indexOf(kout);
+        if (k1 == -1) {
+          throw (`demande pour connecter non connectables ${kin} et ${kout}`);
+        } // if kout not found
+        if (k1 < k0) [k0, k1] = [k1, k0];
+        // put apart points associated with kin and kout
+        let narr = this.connectables[kcon].splice(k0, k1+1-k0);
+        // remove kin and kout from 'connectables' since they now are used
+        narr.shift(); narr.pop();
+        if (narr.length > 0) this.connectables.push(narr); // the rest becomes a new 'connectable' subset
+        if (this.connectables[kcon].length == 0) this.connectables.splice (kcon, 1); // remove subset if empty
+        return; // that's all folks
+      } // if kin was found
+      // not found here, go further
+      ++kcon;
+    } // while...
+
+  } // Hexagon.prototype.connect
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+Hexagon.prototype.drawHexagon = function() {
+
+    ctxGrid.beginPath();
+    ctxGrid.moveTo (this.vertices[0][0], this.vertices[0][1]);
+    ctxGrid.lineTo (this.vertices[1][0], this.vertices[1][1]);
+    ctxGrid.lineTo (this.vertices[2][0], this.vertices[2][1]);
+    ctxGrid.lineTo (this.vertices[3][0], this.vertices[3][1]);
+    ctxGrid.lineTo (this.vertices[4][0], this.vertices[4][1]);
+    ctxGrid.lineTo (this.vertices[5][0], this.vertices[5][1]);
+    ctxGrid.lineTo (this.vertices[0][0], this.vertices[0][1]);
+    ctxGrid.strokeStyle = '#8FF';
+    ctxGrid.lineWidth = 0.5;
+    ctxGrid.stroke();
+} // Hexagon.prototype.drawHexagon
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+// returns a pair of values {kx, ky}
+
+Hexagon.prototype.neighbour = function(side) {
+  if (this.kx & 1) {
+    return {kx: this.kx + [1, 0, -1, -1, 0, 1][side],
+            ky: this.ky + [0, 1, 0, -1, -1, -1][side]};
+  } else {
+    return {kx: this.kx + [1, 0, -1, -1, 0, 1][side],
+            ky: this.ky + [1, 1, 1, 0, -1, 0][side]};
+  }
+} // Hexagon.prototype.neighbour
+// end of class Hexagon
+
+//------------------------------------------------------------------------
+
+function sizeEverything() {
+
+  let crossing, nextCrossing;
+
+  for (let ky = 0; ky < nby ; ++ky) {
+    for (let kx = 0; kx < nbx ; ++kx) {
+      grid[ky][kx].size();
+    } // for kx
+  } // for ky
+
+/* the process above creates most points in two copies.
+The following lines will keep only one - at least along the loops
+*/
+
+  tbLoops.forEach(loop => {
+    for (let k = loop.crossings.length - 1; k >= 0; --k) {
+      crossing = loop.crossings[k]
+      crossing.pin = crossing.hexagon.points[crossing.kin];
+      crossing.ksidein = crossing.hexagon.sideOfPoint[crossing.kin];
+      crossing.ksideout = crossing.hexagon.sideOfPoint[crossing.kout];
+
+// make exit point really the same as the entry point of next crossing
+      nextCrossing = loop.crossings[(k + 1) % loop.crossings.length];
+      crossing.pout = crossing.hexagon.points[crossing.kout] = nextCrossing.hexagon.points[nextCrossing.kin];
+      crossing.angle = crossing.hexagon.angleCrossing[crossing.kin];
+    } // for k on loop.crossings
+  }); // loops.forEach
+
+} // function sizeEverything
+
+//-----------------------------------------------------------------------------
+function affectNeighbour (hexa, side) {
+/* copies value of nbPPSide of one side of one hexagon to the corresponding
+  variable in the neighbour's data */
+
+  let {kx:kx, ky:ky} = hexa.neighbour(side);    // ccordinates of neighbour
+  if (kx < 0 || ky < 0 || kx >= nbx || ky >= nby) return; // out of grid
+  let neighb = grid[ky][kx];  // neighbour hexagon
+  neighb.nbPPSide[(side + 3) % 6] = hexa.nbPPSide[side];
+} // affectNeighbour
+
+//-----------------------------------------------------------------------------
+
+function createGrid() {
+// create the grid of Hexagons
+  let hexa;
+
+  grid = [];
+  /* create table for choice of nbPoints */
+
+  tbNbPoints = [];
+  tbRelProbaNbPoints[geometryChoice].forEach ((frq, nb) => {
+    for (let k = 0; k < frq; ++k) tbNbPoints.push(nb);
+  }); // relProbaNbPoints.forEach
+
+  for (let ky = 0; ky < nby; ++ky) {
+    grid[ky] = []
+    for (let kx = 0; kx < nbx; ++kx) {
+      hexa = new Hexagon(kx, ky);
+      hexa.nbPPSide = []; // number of points per side -> number of lines that will cross this side of an hexagon
+      grid[ky][kx] = hexa;
+    } // for kx
+  } // for ky
+
+// give numbers of dots to sides of innermost hexagons
+  for (let ky = 1; ky < nby - 1; ++ky) {
+    for (let kx = 1; kx < nbx - 1; ++kx) {
+      let reRoll = -1; // side that can be re-rolled if odd sum
+      hexa = grid[ky][kx];
+      let sum = 0;
+      for (let side = 0; side < 6; ++side) { // fill without constraint
+        if (typeof hexa.nbPPSide[side] == 'undefined') {
+          hexa.nbPPSide[side] = tbNbPoints[intAlea(tbNbPoints.length)]; // random number with given probabilities
+          affectNeighbour(hexa, side);
+          reRoll = side; // may need to re-roll this side
+        }
+        sum += hexa.nbPPSide[side];
+      } // for on 6 sides
+      if (sum & 1) { // odd sum : unacceptable
+        let oldVal = hexa.nbPPSide[reRoll];
+        let newVal;
+        do {
+          newVal = tbNbPoints[intAlea(tbNbPoints.length)]; // random number with given probabilities
+        } while (((oldVal + newVal) & 1) == 0) // re-roll until parity changes
+        hexa.nbPPSide[reRoll] = newVal;
+        affectNeighbour(hexa, reRoll);
+      }
+    } // for kx
+  } // for ky
+
+// give numbers of dots to sides of outermost hexagons
+  for (let ky = 0; ky < nby; ++ky) {
+    for (let kx = 0; kx < nbx ; ++kx) {
+      if (ky != 0 && ky != nby - 1 && kx != 0 && kx != nbx - 1) continue; // innermost hexagon
+      hexa = grid[ky][kx];
+// give 0 to outermost sides
+      if (ky == 0) { // top row
+        hexa.nbPPSide[4] = 0;
+        if (kx & 1) { // odd columns
+          hexa.nbPPSide[3] = 0;
+          hexa.nbPPSide[5] = 0;
+        }
+      } // if top row
+      if (ky == nby - 1) { // bottom row
+        hexa.nbPPSide[1] = 0;
+        if ((kx & 1) == 0) { // odd columns
+          hexa.nbPPSide[0] = 0;
+          hexa.nbPPSide[2] = 0;
+        }
+      } // if bottom row
+      if (kx == 0) { // left column
+        hexa.nbPPSide[2] = 0;
+        hexa.nbPPSide[3] = 0;
+      } // if left column
+
+      if (kx == nbx - 1) { // right column
+        hexa.nbPPSide[5] = 0;
+        hexa.nbPPSide[0] = 0;
+      } // if right column
+// zeroes have been given : other sides now
+      let reRoll = -1; // side that can be re-rolled if odd sum
+      let sum = 0;
+      for (let side = 0; side < 6; ++side) { // fill without constraint
+        if (typeof hexa.nbPPSide[side] == 'undefined') {
+          hexa.nbPPSide[side] = tbNbPoints[intAlea(tbNbPoints.length)]; // random number with given probabilities
+          affectNeighbour(hexa, side);
+          reRoll = side; // may need to re-roll this side
+        }
+        sum += hexa.nbPPSide[side];
+      } // for on 6 sides
+      if (sum & 1) { // odd sum : unacceptable
+      // if an even value is possible, roll again
+      // else force to 0
+        let oldVal = hexa.nbPPSide[reRoll];
+        let newVal;
+          if (((oldVal & 1) == 0) ||
+              tbRelProbaNbPoints[geometryChoice][0] > 0 ||
+              tbRelProbaNbPoints[geometryChoice][2] > 0 ) { // if we have a chance to roll 0 or 2
+          do {
+            newVal = tbNbPoints[intAlea(tbNbPoints.length)]; // random number with given probabilities
+          } while (((oldVal + newVal) & 1) == 0) // re-roll until parity changes
+        } else newVal = 0; // force to 0
+        hexa.nbPPSide[reRoll] = newVal;
+        affectNeighbour(hexa, reRoll);
+      }
+    } // for kx
+  } // for ky
+
+/* second pass to evaluate which points are on each side (pointsOfSide) and
+on which side is each point (sideOfPoint)
+*/
+  grid.forEach(line =>{
+    line.forEach(hexa =>{
+
+      hexa.nbPoints = hexa.nbPPSide.reduce ((cumul, valeur) => cumul + valeur, 0);
+
+  /* compute, for each point of the current Hexagon, wich side it belongs to */
+      hexa.sideOfPoint = [];
+      let kPoint = 0;
+      for (let kCote = 0; kCote < 6; ++kCote) {
+        for (let k = 0; k < hexa.nbPPSide[kCote]; ++k) hexa.sideOfPoint.push(kCote);
+      } // for kcote
+
+  /* compute, for each side of the current Hexagon, which points belong to it */
+      hexa.pointsOfSide = [[],[],[],[],[],[]];
+      for (let k = 0; k < hexa.nbPoints; ++k) hexa.pointsOfSide[hexa.sideOfPoint[k]].push(k);
+
+/* create the set of points that can be connected together in one hexagon
+     - initially all of them */
+      hexa.connectables = [[]];
+      for (let kin = 0; kin < hexa.nbPoints; ++kin) hexa.connectables[0][kin] = kin;
+
+    }); // line.forEach
+  }); // grid.forEach
+
+} // createGrid
+//------------------------------------------------------------------------
+
+function analyseLoops() {
+
+  let hexa;
+
+  tbLoops = [];
+  cptLoops = 0;
+
+/* noted we've been nowhere till now */
+  grid.forEach (line => {
+    line.forEach (hexa => {
+      hexa.passe = [];
+      hexa.entry = []; // to remind if point in entry or exit while going through the loop
+      hexa.tbCrossings = [];
+      hexa.angleCrossing = [];
+    }); // line.forEach
+  }); // grid.forEach
+
+// choosing starting point and creating 1st loop
+  if (uncentered) {
+    hexa = grid[intAlea(nby)][intAlea(nbx)];  // anywhere
+  } else {
+    hexa = grid[mfloor(nby / 2)][mfloor(nbx / 2)]; // centered
+  }
+  while (hexa.nbPoints == 0 ) { // bad luck !!! let us try again
+    hexa = grid[intAlea(nby)][intAlea(nbx)];  // anywhere
+  }
+  analyseOneLoop(hexa, mfloor(hexa.nbPoints / 2));
+
+/* then we start from the points neighbours of the entry and exit points of
+every part of previously created loops
+
+remark : cptLoops increases during this 'for' loop, but kLoop will allways catch it up
+*/
+  for (let kLoop = 0 ; kLoop < cptLoops ; ++kLoop) {
+    let loop = tbLoops[kLoop];
+    loop.crossings.forEach(crossing => {
+      let hexa = crossing.hexagon;
+      analyseOneLoop(hexa, (crossing.kin - 1 + hexa.nbPoints) % hexa.nbPoints); // -1 neighbour of entry point
+      analyseOneLoop(hexa, (crossing.kin + 1 ) % hexa.nbPoints); //  +1 neighbour of entry point
+      analyseOneLoop(hexa, (crossing.kout - 1 + hexa.nbPoints) % hexa.nbPoints); //  -1 neighbour of exit point
+      analyseOneLoop(hexa, (crossing.kout + 1 ) % hexa.nbPoints); //  +1 neighbour of exit point
+    }) // loop.crossings.forEach
+  } // for kLoop
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+function analyseOneLoop (hexa, kin) {
+
+  let loop, crossing, kx, ky, kout, exitSide;
+  let kconn, idxconn, ncrossing;
+
+  if (hexa.nbPoints == 0) return; // nothing can be done
+
+  if (typeof hexa.passe[kin] != 'undefined') return; // already passed there
+  loop = {crossings: [], angle : 0};
+  while (typeof hexa.passe[kin] == 'undefined') { // while not already passed there, meaning while loop not closed
+    // look for first connectable point close to kin
+    // look for set of connectables containing kin
+    for (kconn = 0 ; kconn < hexa.connectables.length ; ++ kconn ) {
+      if ((idxconn = hexa.connectables[kconn].indexOf(kin)) != -1) break; // found it
+    } // for
+    if (concentric && intAlea(regularity) != 0) { // generate more or less concentric loops
+      idxconn = (idxconn + 1) % hexa.connectables[kconn].length;
+  } else { // not concentric loops
+ /* pick up a random point in same connectable set - with different parity */
+    idxconn = intAlea(hexa.connectables[kconn].length / 2) * 2 + ((idxconn & 1) ^ 1);
+  }
+    kout = hexa.connectables[kconn][idxconn];
+
+    hexa.tbCrossings[kin] = kout;
+    hexa.tbCrossings[kout] = kin;
+    hexa.connect(kin, kout); // to update 'connectables'
+    {
+      let angle;      // evaluate the angle of this crossing ( 1/6 of turn)
+      switch ((hexa.sideOfPoint[kout] - hexa.sideOfPoint[kin] + 6) %6 ) {
+
+        case 0 :  angle = (kout > kin) ? -3 : +3;
+                  break;
+        case  1 : angle = -2;
+                  break;
+        case  2 : angle = -1;
+                  break;
+        case  3 : angle = 0;
+                  break;
+        case  4 : angle = 1;
+                  break;
+        case  5 : angle = 2;
+                  break;
+      } // switch for angle
+      hexa.angleCrossing[kin] = angle;
+      hexa.angleCrossing[kout] = -angle;
+      loop.angle += angle;
+    }
+    loop.crossings.push ({hexagon: hexa, kin: kin, kout: kout});
+    hexa.passe[kin] = hexa.passe[kout] = cptLoops;
+    hexa.entry[kin] = true; // to find easily the direction of crossing
+    hexa.entry[kout] = false;
+
+// moving to the neighbour Hexagon
+
+    exitSide = hexa.sideOfPoint[kout];
+    ({kx, ky} = hexa.neighbour(exitSide));
+
+    let idxs = hexa.pointsOfSide[exitSide].indexOf(kout); // index of point in the side it is going out from
+    idxs = hexa.nbPPSide[exitSide] - 1 - idxs; // index of entry in the side of the neighbour Hexagon
+    hexa = grid[ky][kx]; // neighbour Hexagon
+    kin = hexa.pointsOfSide[(exitSide + 3) % 6][idxs]; // entry point in neighbour
+  } // while not back to the starting point
+
+  tbLoops[cptLoops++] = loop; // add one loop
+
+// if loop was travelled along the wrong way, let us put it the right one
+
+  if (loop.angle < 0) {
+    let nloop = {crossings: [], angle : -loop.angle}; // so, loop.angle is ALLWAYS +6
+    for (let k = loop.crossings.length - 1; k >=0; --k) {
+      ({hexagon:hexa, kin:kin, kout:kout} = loop.crossings[k]);
+      ncrossing = {hexagon: hexa, kin:kout, kout: kin};
+      nloop.crossings.push(ncrossing);
+      hexa.entry[kout] = !hexa.entry[kout];
+      hexa.entry[kin] = !hexa.entry[kin];
+    } // for k
+    tbLoops[cptLoops-1] = nloop;
+  } // if (loop.angle < 0)
+
+} // analyseOneLoop
+
+} // analyseLoops
+
+
+//------------------------------------------------------------------------
+
+function prioritizeLoops() {
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  function apeerb (a, b) {
+  // "hierar" already containing a, adds b as a peer of a
+//    a.parent.innerHier = a.parent.innerHier ||[];
+    a.parent.innerHier.push(b.found); // b is added as child of a's parent
+  } // apeerb
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  function asurroundsb (a,b) {
+    // "hierar" already containing a, adds b as a's child
+    a.found.innerHier.push(b.found); // b is added 'inside' a
+  } // asurroundsb
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  function bsurroundsa (a,b) {
+    /* "hierar" already containing a, adds b as direct parent of a and a's peers
+    */
+
+    let par = a.parent;
+    while ( par.innerHier.length > 0) {
+      b.found.innerHier.push (par.innerHier.shift()); // adds a or a peer to b
+    } // while
+    
+    par.innerHier.push(b.found);          // b is added to former parent of a
+
+  } // bsurroundsa
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+// tries to find particular loop given by kb in (sub-)hierarchy given by included
+    function find (included,kb) {
+      let result;
+      let parent = included;
+      for (let k = 0 ; k < parent.innerHier.length; ++k) {
+        if (parent.innerHier[k].kLoop == kb) return {parent: parent, found: parent.innerHier[k]};
+        if (result = find(parent.innerHier[k],kb)) return result;
+      }
+      return false;
+    } // find
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+/* The loops are designated by their index in tbLoops
+the representation of one loop in the hierarchy is an array whose fist element
+is the index of this loop, and the others elements are the representation
+of -if any- the loops immediatly included in the firs one.
+
+By example, 0 designates a loop [0] the hierachical representation of this loop
+if it surrounds no other loop
+
+other example : if loop 0 contains loops 2 and 3, and loop 3 contains loop 4, this will
+be represented by hierar = [0,[2,[4]],[3]]
+The top level of this hierarchy is the outside world, represented by indes -1
+*/
+/*
+  We shall create a table of loops to be examined, initialized with a single loop.
+  We will go through this loop and, at every exit point of an hexagon, determinate
+  the hierarchical relation between the current loop and the loop which passes by
+  the two neighbour points : a surrounds b, b surrounds a or a and b at the same level.
+  The indexes of the encountered loops will be added to the list of loops to be
+  examined, if they are not already in this list.
+  Two loops passing by neighbours points can only be immediate parent, child of
+  sibling of each other. Their relation can be deduced from the order of the two
+  neighbour points, and the fact that each loop turns clockwise or counter-clockwise
+
+*/
+
+// beginning of function prioritizeLoops() {
+
+  let kb;      // index in toBeExamined
+  let loopa;   // loop qu'on est en train de parcourir
+  let loopb;   // loop neighbour of loopa
+  let kLoopa, kLoopb; // indexes of loopa and loopb
+  let kentry;    // index of point by which the loop enters the hexagon
+  let kentryn;   // index of point neighbour of kentry
+  let descHierA, descHierB; // hierarchical descriptions of loopa and loopb
+  let anglea, angleb;
+
+  let toBeExamined = [0];    // table of loops to be examined, let us begin with just 0
+
+  hierar = {kLoop:-1, innerHier: [{kLoop:0, innerHier:[]}]};     // let us create a hierarchy where loop 0 is the only loop included une the universe (-1)
+
+  for (kb = 0; kb < toBeExamined.length; ++kb) {
+  /* toBeExamined will be extended inside the 'for' loop, but
+  kb will allways catch up with toBeExamined.length */
+
+/* look for current loop and is parent in 'hierar' */
+    kLoopa = toBeExamined[kb];
+    loopa = tbLoops[kLoopa];
+    anglea = loopa.angle; // we enter by this point -> initialize angle
+
+    loopa.crossings.forEach(crossing => { // for every hexagon we will cross
+      for (let sens = 0; sens < 2; ++sens) {
+        kentry = [crossing.kin, crossing.hexagon.tbCrossings[crossing.kin]][sens]; // the entry point
+        anglea = loopa.angle * (crossing.hexagon.entry [kentry] ? 1 : -1);
+
+        let nbPts = crossing.hexagon.nbPoints;
+  // let us check the '+1' neighbour of current point
+        kentryn = (kentry + 1) % nbPts;
+        kLoopb = crossing.hexagon.passe[kentryn];
+        loopb = tbLoops[kLoopb];
+        if (toBeExamined.indexOf(kLoopb) == -1) { // if neighbour loop not studied yet
+          descHierA = find (hierar, kLoopa);
+          toBeExamined.push(kLoopb);              // add it to toBeExamined
+          descHierB = {found: {kLoop: kLoopb, innerHier: []}};
+ // we prepare its hierarchical representation
+          angleb = loopb.angle * ( crossing.hexagon.entry[kentryn] ? 1 : -1);
+          switch (angleb) {
+            case -6 : if (anglea == - 6) {
+                        asurroundsb(descHierA, descHierB);
+                      } else {
+                        apeerb(descHierA, descHierB);
+                      }
+                      break;
+            case +6 : if (anglea == - 6) {
+                        console.error('bug : loopb.angle > 0 et loopa.angle < 0');
+                      } else {
+                        bsurroundsa(descHierA, descHierB);
+                      }
+                      break;
+            default : console.error ('unexpected angle');
+          } // switch angle of loopb
+        } // if loop not known yet
+
+ // let us check the '-1' neighbour of current point
+        kentryn = (kentry + nbPts - 1) % nbPts;
+        kLoopb = crossing.hexagon.passe[kentryn];
+        loopb = tbLoops[kLoopb];
+        if (toBeExamined.indexOf(kLoopb) == -1) { // if neighbour loop not studied yet
+          descHierA = find (hierar, kLoopa);
+          toBeExamined.push(kLoopb);              // add it to toBeExamined
+          descHierB = {found: {kLoop: kLoopb, innerHier: []}};      // we prepare its hierarchical representation
+          angleb = loopb.angle * ( crossing.hexagon.entry[kentryn] ? 1 : -1);
+          switch (angleb) {
+            case -6 : if (anglea == -6) {
+                        bsurroundsa(descHierA, descHierB);
+                      } else {
+                        console.error('bug : loopb.angle > 0 et loopa.angle < 0');
+                      }
+                      break;
+            case +6 : if (anglea == -6) {
+                        apeerb(descHierA, descHierB);
+                      } else {
+                        asurroundsb(descHierA, descHierB);
+                      }
+                      break;
+            default : console.error ('unexpected angle');
+          } // switch angle of loopb
+        } // if loop not known yet
+      } // for sens
+    }); // loopa.forEach
+
+  } // for kb
+
+// define colors of loops based on hierarchy
+  chosenPalette = (paletteChoice == -1) ? intAlea(palettes.length) : paletteChoice;
+  if (chosenPalette != 0) chosenPalette = palettes[chosenPalette];
+
+/* the 'hue' formal parameter is really hue (0..359) for chosenPalette == 0
+  and palette index (0..chosenPalette.length - 1) for other chosen palettes
+*/
+  (function colourLoops(hierarchie, hue, level) {
+    let color = (chosenPalette === 0) ? `hsl(${hue},${intAlea(30,100)}%,${intAlea(30,70)}%)` : chosenPalette[hue];
+    if (hierarchie.kLoop == -1) bgColor = color;
+    else tbLoops[hierarchie.kLoop].color = color;
+    if ( hierarchie.innerHier) {
+      for (let k = 0; k < hierarchie.innerHier.length; ++k) colourLoops(hierarchie.innerHier[k],
+        (chosenPalette === 0) ?  ((hue + (alea(60,300))) % 360) : (hue + intAlea(1, chosenPalette.length)) % chosenPalette.length,
+        level + 1);
+    }
+  })(hierar, intAlea((chosenPalette === 0) ? 360 : chosenPalette.length), 0);
+
+} // prioritizeLoops
+
+//------------------------------------------------------------------------
+//------------------------------------------------------------------------
+
+  function isFinal (crossing, crossingsA) {
+/* checks if given crossing refers to one of crossingsA
+  check is done on coordinates of pin and pout, sincer JS objects are different
+  and cannot compare directly */
+
+  let crossA;
+    for (let k = crossingsA.length - 1 ; k >= 0; --k) {
+      crossA = crossingsA[k];
+      if (crossing.hexagon != crossA.hexagon) continue; // no chance
+      if (crossing.ksidein != crossA.ksidein) continue;
+      if (crossing.ksideout != crossA.ksideout) continue;
+      if (distance(crossing.pin, crossA.pin) > 0.1) continue;
+      if (distance(crossing.pout, crossA.pout) <= 0.1) return true; // found !
+    } // for k
+    return false; // not found
+  } // isFinal
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+function growLoop (loop, loopA) {
+/* expands a given loop to a bigger one (loop to loopA)
+If only one loop is given, it is a loop at the deepest level of the hierarchy,
+and it must be grown from nothing
+*/
+
+  let crossings, initialCrossings, crossingsA;
+//  let listP, listPA;
+  let expansions = [], exp;
+  let byAngle, kByAngle;
+  let currCrossing, kCurrCrossing;
+  let kNeigh;
+  let toWorkOn = [];
+  let bef, aft;
+  let pin, pout, vertex, nextP;
+  let vertex2, nextP2;
+  let kAin;
+  let crossAin, hexa;
+
+  if (!loopA) {
+    loopA = loop;
+    loop = undefined;
+  }
+// firstly, let us take copies of the loops as arrays of crossings
+  if (loop) {
+    crossings = loop.crossings.slice(); // starting loop
+    initialCrossings = loop.crossings.slice(); // starting loop
+//    listP = listOfPoints(crossings);
+  }
+
+  crossingsA = loopA.crossings.slice(); // target
+//  listPA = listOfPoints(crossingsA);
+
+/* sort the crossings of the innermost loop by angle
+in order to manage with negative angles first
+  angles range from -3 to +3, mapped to 0 to 6
+*/
+  byAngle = [[],[],[],[],[],[],[]];
+  if (loop) {
+    crossings.forEach(crossing => byAngle[crossing.angle + 3].push(crossing));
+    toWorkOn = Array.from (crossings, crossing => crossing);
+  }
+
+/* if no innermost loop, create one from a part of outermost loop
+  Will produce an intermediate state - or directly final state if loop very
+  simple
+*/
+  if (!loop) {
+    let randor = randomOrder(loopA.crossings.length);
+   // try to find a 180 degrees turn
+    for (let k = loopA.crossings.length - 1; k >= 0; --k) {
+      let kLoop = randor[k];
+      let kLoopP = (kLoop > 0) ? (kLoop - 1) : (loopA.crossings.length - 1);
+      let kLoopN =  (kLoop + 1) % loopA.crossings.length;
+      let crs = loopA.crossings[kLoop];
+      if (crs.angle == 3) {
+        loop = {crossings: [crs,
+          {
+            hexagon: loopA.crossings[kLoopP].hexagon,
+            pin: crs.pout,
+            kin: loopA.crossings[kLoopN].kin,
+            ksidein: (crs.ksidein + 3) % 6,
+            pout: crs.pin,
+            kout: loopA.crossings[kLoopP].kout,
+            ksideout: (crs.ksidein + 3) % 6,
+            angle: 3
+          }]};
+          exp = {op: 'init180'};
+        break;
+      } // if (crs.angle == 3)
+    } // loop on loopA
+    if (!exp) {
+      // randor already generated
+   // try to find a 120 degrees turn
+      for (let k = loopA.crossings.length - 1; k >= 0; --k) {
+        let kLoop = randor[k];
+        let crs = loopA.crossings[kLoop];
+        if (crs.angle == 2) {
+          let kLoopP = (kLoop > 0) ? (kLoop - 1) : (loopA.crossings.length - 1);
+          let kLoopN =  (kLoop + 1) % loopA.crossings.length;
+          let hexaP = loopA.crossings[kLoopP].hexagon;
+          let hexaN = loopA.crossings[kLoopN].hexagon;
+          let kSide = crs.ksidein;
+          vertex = crs.hexagon.vertices[kSide];
+          // are there point between pin and vertex of pout and vertex ?
+          if (otherPoint(crossingsA, crs.hexagon, kSide, crs.pin, vertex)) continue;
+          if (otherPoint(crossingsA, crs.hexagon, (kSide + 5) % 6, crs.pout, vertex)) continue;
+          // is there a point on side of vertex opposite to crs ?
+          nextP = closestPoint(crossingsA, vertex, hexaP, (kSide + 4) % 6);
+          if (nextP) nextP = nextP.pfound;
+          else nextP = intermediate (vertex, hexaP.vertices[(kSide + 5) % 6], 0.5);
+
+          loop = {crossings: [crs,
+            {
+              hexagon: hexaN,
+              pin: crs.pout,
+              ksidein: (kSide + 2) % 6,
+              pout: nextP,
+              ksideout: (kSide + 1) % 6,
+              angle: 2
+            }, {
+              hexagon: hexaP,
+              pin: nextP,
+              ksidein: (kSide + 4) % 6,
+              pout: crs.pin,
+              ksideout: (kSide + 3) % 6,
+              angle: 2
+            }]};
+            exp = {op: 'init120'};
+          break;
+        } // if (crs.angle == 2)
+      } // loop on loopA
+    } // if (!exp)
+    if (!exp) throw ('It happened');
+    crossings = loop.crossings.slice(); // initial loop
+    toWorkOn = [];
+    exp.aft=[];
+    crossings.forEach(crossing => {
+      exp.aft.push(crossing); // initialise 'aft' property of exp
+      if (! isFinal (crossing, crossingsA)) {
+        byAngle[crossing.angle + 3].push(crossing);
+        toWorkOn.push(crossing);
+      }
+    });
+    expansions.push(exp);
+  } // if no innermost loop
+
+  let tries = 10000;
+expand0:
+  do {
+    do {
+      exp = undefined;
+      if (byAngle[0].length > 0) { // -180 degrees
+        arrayShuffle(byAngle[0]);
+        for (let k = byAngle[0].length - 1; !exp && k >= 0 ; --k) {
+          kByAngle = k;
+          currCrossing = byAngle[0][kByAngle];
+          if (pointInCrossings(crossingsA, currCrossing.pin)) continue;
+          if (pointInCrossings(crossingsA, currCrossing.pout)) continue;
+          kCurrCrossing = findIndex(crossings, currCrossing);
+          exp = expandm180(crossings, currCrossing, kCurrCrossing);
+        } // for k
+      } // -180 degrees
+
+      if (!exp && byAngle[1].length > 0) { // -120 degrees
+        arrayShuffle(byAngle[1]);
+        for (let k = byAngle[1].length - 1; !exp && k >= 0; --k) {
+          kByAngle = k;
+          currCrossing = byAngle[1][kByAngle];
+          if (pointInCrossings(crossingsA, currCrossing.pin)) continue;
+          if (pointInCrossings(crossingsA, currCrossing.pout)) continue;
+          kCurrCrossing = findIndex(crossings, currCrossing);
+          kNeigh = (kCurrCrossing + 1) % crossings.length;
+          if (crossings[kNeigh].angle == -2 &&
+                 ! pointInCrossings(crossingsA, crossings[kNeigh].pout)) { // 2 x -120
+            exp = expand2m120(crossings, crossingsA, kCurrCrossing, kNeigh);
+          } else {
+            kNeigh = (kCurrCrossing + crossings.length - 1) % crossings.length;
+            if (crossings[kNeigh].angle == -2 &&
+                 ! pointInCrossings(crossingsA, crossings[kNeigh].pin)) { // 2 x -120
+              exp = expand2m120(crossings, crossingsA, kNeigh, kCurrCrossing);
+            }  // -120
+          }
+          if (!exp) exp = expandm120(crossings, crossingsA, currCrossing, kCurrCrossing);
+        } // for k
+      } // -120 degrees
+
+      if (!exp  && byAngle[2].length > 0) { // -60 degrees
+        arrayShuffle(byAngle[2]);
+        for (let k = byAngle[2].length - 1; !exp && k >= 0 ; --k) {
+          kByAngle = k;
+          currCrossing = byAngle[2][kByAngle];
+          kCurrCrossing = findIndex(crossings, currCrossing);
+          exp = expandm60(crossings, crossingsA, currCrossing, kCurrCrossing);
+        } // for k
+      } // -60 degrees
+
+      if (!exp) { // lets us try now expansions not based only on angle
+        arrayShuffle(toWorkOn);
+        // one point close to crossingA ?
+        for (let k = toWorkOn.length - 1 ; !exp && k >= 0 ; --k) {
+          currCrossing = toWorkOn[k];
+          pin = currCrossing.pin;
+          if (pointInCrossings(crossingsA, pin))
+            continue; // point already on crossingsA, do not move it
+          kCurrCrossing = findIndex(crossings, currCrossing);
+          vertex = currCrossing.hexagon.vertices[(currCrossing.ksidein + 1) % 6];
+          nextP = closestNextPoint(crossingsA, pin, vertex,currCrossing.hexagon, currCrossing.ksidein);
+          if (nextP) {
+
+     // check if pout can be moved at the same time
+            pin = currCrossing.pout;
+            if (!pointInCrossings(crossingsA, pin)) {
+              vertex2 = currCrossing.hexagon.vertices[currCrossing.ksideout];
+              nextP2 = closestNextPoint(crossingsA, pin, vertex2,currCrossing.hexagon, currCrossing.ksideout);
+              if (nextP2 !== false) {
+                exp = expandpinpout(crossings, crossingsA, currCrossing, kCurrCrossing, nextP, nextP2);
+              }
+            }
+            if (! exp) exp = expandpin(crossings, crossingsA, currCrossing, kCurrCrossing, nextP);
+          } // if (nextP)
+          else { // move point and split it at next vertex
+            exp = expandsplitpin (crossings, crossingsA, currCrossing, kCurrCrossing, vertex);
+          }
+        } // for k
+      } // if (!exp)
+   // expand to 180 degrees ?
+      if (!exp) { // lets us try now expansions not based only on angle
+        // toWorkOn was shuffled just above
+
+        for (let k = toWorkOn.length - 1 ; !exp && k >= 0 ; --k) {
+          currCrossing = toWorkOn[k];
+          pin = currCrossing.pin;
+          kAin = wherePinInCrossings(crossingsA, pin);
+          if (kAin === false) continue;
+          kCurrCrossing = findIndex(crossings, currCrossing);
+          crossAin = crossingsA[kAin];
+          // search for next point along crossAin.ksideout
+          hexa = currCrossing.hexagon;
+          vertex = hexa.vertices[(crossAin.ksideout + 1) % 6];
+          nextP = closestNextPoint (crossingsA, crossAin.pout, vertex, hexa, crossAin.ksideout);
+          if (nextP) {
+            exp = expandp180(crossings, crossingsA, currCrossing, kCurrCrossing, crossAin, nextP.pfound);
+          } else {
+          // search for point on next side
+            exp = expand2p120(crossings, crossingsA, currCrossing, kCurrCrossing, crossAin, vertex, nextP);
+          }
+
+        } // for k toWorkOn
+
+      } // if ! exp
+      if (exp) {
+        bef = exp.bef;
+        aft = exp.aft;
+        expansions.push(exp);
+
+      /* update byAngle */
+      /* update toWorkOn */
+        bef.forEach (crossing => {
+          removeFromArray(byAngle[crossing.angle + 3], crossing);
+          removeFromArray(toWorkOn, crossing);
+          crossing.expAfter = exp;
+        });
+      /* update toWorkOn
+        bef.forEach (crossing => {
+          removeFromArray(toWorkOn, crossing);
+        }); */
+
+      /* add new crossings in tables if they do not belong to crossingsA */
+
+        aft.forEach (crossing => {
+          if (! isFinal (crossing, crossingsA)) {
+            byAngle[crossing.angle + 3].push(crossing);
+            toWorkOn.push(crossing);
+          }
+        });
+      }
+    } while (exp);
+  } while (toWorkOn.length > 0 && --tries > 0);
+
+  if (toWorkOn.length > 0) throw('This happened too !!! Noooooo!!!');
+
+  if (initialCrossings) {
+    initialCrossings.forEach(crossing => crossing.initial = true);
+  }
+
+// pre-compute all points for Bezier curves
+
+  expansions.forEach (exp => {
+    if (exp.bef) exp.bef.forEach (crossing => {
+      if (! crossing.bezier) crossing.bezier = toBezier(crossing);
+    });
+    exp.aft.forEach (crossing => {
+      if (! crossing.bezier) crossing.bezier = toBezier(crossing);
+    });
+  }); // expansions.forEach
+
+  return {expansions: expansions, init: initialCrossings};
+} // growLoop
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+function expandm180(crossings, currCrossing, kCurrCrossing) {
+
+  let kPrevCrossing, kNextCrossing;
+  let prevCrossing, nextCrossing;
+  let exp; // to be added to expansions
+  let bef = [], aft = [];
+
+  kPrevCrossing = kCurrCrossing > 0 ? kCurrCrossing - 1 : crossings.length - 1;
+  prevCrossing = crossings[kPrevCrossing];
+  kNextCrossing = kCurrCrossing < crossings.length - 1 ? kCurrCrossing + 1 : 0;
+  nextCrossing = crossings[kNextCrossing];
+
+  exp = {op: "expm180", bef: bef, aft: aft};
+  bef[0] = prevCrossing;
+  bef[1] = currCrossing;
+  bef[2] = nextCrossing;
+  aft[0] = copyCrossing(prevCrossing);
+  aft[0].pout = nextCrossing.pout;
+  aft[0].ksideout = nextCrossing.ksideout;
+  aft[0].angle += nextCrossing.angle - 3;
+
+/* update crossings */
+  crossings[kPrevCrossing] = aft[0];
+  if (kCurrCrossing == crossings.length - 1) {
+    crossings.pop();
+    crossings.shift();
+  } else {
+    crossings.splice(kCurrCrossing, 2);
+  }
+  return exp;
+
+} // expandm180
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+function expand2m120(crossings, crossingsA, kCurrCrossing, kNeigh) {
+
+  let currCrossing = crossings[kCurrCrossing];
+  let kPrevCrossing, kNextCrossing;
+  let prevCrossing, nextCrossing, neighCrossing;
+  let exp; // to be added to expansions
+  let bef = [], aft = [];
+  let vertex;
+
+  kPrevCrossing = kCurrCrossing > 0 ? kCurrCrossing - 1 : crossings.length - 1;
+  prevCrossing = crossings[kPrevCrossing];
+  neighCrossing = crossings[kNeigh];
+  kNextCrossing = kNeigh < crossings.length - 1 ? kNeigh + 1 : 0;
+  nextCrossing = crossings[kNextCrossing];
+  vertex = currCrossing.hexagon.vertices[(currCrossing.ksidein + 1) % 6];
+
+  if (otherPoint(crossingsA, currCrossing.hexagon, currCrossing.ksidein, currCrossing.pin, vertex)) return false;
+  if (otherPoint(crossingsA, nextCrossing.hexagon, nextCrossing.ksidein, nextCrossing.pin, vertex)) return false;
+  if (otherPoint(crossings, currCrossing.hexagon, currCrossing.ksidein, currCrossing.pin, vertex)) return false;
+  if (otherPoint(crossings, nextCrossing.hexagon, nextCrossing.ksidein, nextCrossing.pin, vertex)) return false;
+
+  exp = {op: "exp2m120", bef: bef, aft: aft};
+  bef[0] = prevCrossing;
+  bef[1] = currCrossing;
+  bef[2] = neighCrossing;
+  bef[3] = nextCrossing;
+  aft[0] = copyCrossing(prevCrossing);
+  aft[0].pout = nextCrossing.pout;
+  aft[0].ksideout = nextCrossing.ksideout;
+  aft[0].angle += nextCrossing.angle - 4;
+
+/* update crossings */
+  crossings[kPrevCrossing] = aft[0];
+  if (kCurrCrossing == crossings.length - 1) {
+    crossings.pop();
+    crossings.shift();crossings.shift();
+  } else if (kCurrCrossing == crossings.length - 2) {
+    crossings.pop(); crossings.pop();
+    crossings.shift();
+  } else {
+    crossings.splice(kCurrCrossing, 3);
+  }
+
+  return exp;
+
+} // expand2m120
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+function expandm120(crossings, crossingsA, currCrossing, kCurrCrossing) {
+
+  let kPrevCrossing, kNextCrossing;
+  let prevCrossing, nextCrossing;
+  let exp; // to be added to expansions
+  let bef = [], aft = [];
+  let vertex, kOtherSide;
+  let f1, f2, pTarg;
+
+  kPrevCrossing = kCurrCrossing > 0 ? kCurrCrossing - 1 : crossings.length - 1;
+  prevCrossing = crossings[kPrevCrossing];
+  kNextCrossing = kCurrCrossing < crossings.length - 1 ? kCurrCrossing + 1 : 0;
+  nextCrossing = crossings[kNextCrossing];
+
+  vertex = currCrossing.hexagon.vertices[(currCrossing.ksidein + 1) % 6];
+
+// check there is no other point between vertex and ends of loop to reduce
+  if (otherPoint (crossings, currCrossing.hexagon, currCrossing.ksidein, currCrossing.pin, vertex)) {
+    return false;
+  }
+  if (otherPoint (crossings, currCrossing.hexagon, currCrossing.ksideout, currCrossing.pout, vertex)) {
+    return false;
+  }
+  if (otherPoint (crossingsA, currCrossing.hexagon, currCrossing.ksidein, currCrossing.pin, vertex)) {
+    return false;
+  }
+  if (otherPoint (crossingsA, currCrossing.hexagon, currCrossing.ksideout, currCrossing.pout, vertex)) {
+    return false;
+  }
+
+// check for the closest point - if any - on the 3rd side from vertex
+  kOtherSide = (prevCrossing.ksideout + 5 ) % 6; // ( + 5 % 6 is -1)
+// check in crossings first
+  f1 = closestPoint (crossings, vertex, prevCrossing.hexagon, kOtherSide);
+// check in crossingsA too
+  f2 = closestPoint (crossingsA, vertex, prevCrossing.hexagon, kOtherSide);
+
+  if (f1 && !f2) return false;
+  if ( f1 && f2 && f1.dmin < f2.dmin) return false;
+  if ( f2 ) {
+    pTarg = f2.pfound;
+  } else {
+    pTarg = intermediate (prevCrossing.hexagon.vertices[kOtherSide],
+               prevCrossing.hexagon.vertices[(kOtherSide + 1 ) % 6], 0.5);
+  }
+
+  exp = {op: "expm120", bef: bef, aft: aft};
+  bef[0] = prevCrossing;
+  bef[1] = currCrossing;
+  bef[2] = nextCrossing;
+  aft[0] = copyCrossing(prevCrossing);
+  aft[0].pout = pTarg;
+  aft[0].ksideout = kOtherSide;
+  --aft[0].angle;
+  aft[1] = copyCrossing(nextCrossing);
+  aft[1].pin = pTarg;
+  aft[1].ksidein = (kOtherSide + 3) % 6;
+  --aft[1].angle;
+
+/* update crossings */
+  crossings[kPrevCrossing] = aft[0];
+  crossings[kNextCrossing] = aft[1];
+  crossings.splice(kCurrCrossing, 1);
+
+  return exp;
+} // expandm120
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+function expandm60(crossings, crossingsA, currCrossing, kCurrCrossing) {
+
+  let kPrevCrossing, kNextCrossing;
+  let prevCrossing, nextCrossing;
+  let exp; // to be added to expansions
+  let bef = [], aft = [];
+  let vertex1, vertex2
+  let kOtherSide1, kOtherSide2;
+  let f1, f2, pTarg1, pTarg2;
+  let kNeighHex;
+
+  kPrevCrossing = kCurrCrossing > 0 ? kCurrCrossing - 1 : crossings.length - 1;
+  prevCrossing = crossings[kPrevCrossing];
+  kNextCrossing = kCurrCrossing < crossings.length - 1 ? kCurrCrossing + 1 : 0;
+  nextCrossing = crossings[kNextCrossing];
+
+  vertex1 = currCrossing.hexagon.vertices[(currCrossing.ksidein + 1) % 6];
+
+// check there is no other point between vertex and ends of loop to reduce
+  if (otherPoint (crossings, currCrossing.hexagon, currCrossing.ksidein, currCrossing.pin, vertex1)) {
+    return false;
+  }
+  vertex2 = currCrossing.hexagon.vertices[(currCrossing.ksidein + 2) % 6];
+  if (otherPoint (crossings, currCrossing.hexagon, currCrossing.ksideout, currCrossing.pout, vertex2)) {
+    return false;
+  }
+  if (otherPoint (crossingsA, currCrossing.hexagon, currCrossing.ksidein, currCrossing.pin, vertex1)) {
+    return false;
+  }
+  if (otherPoint (crossingsA, currCrossing.hexagon, currCrossing.ksideout, currCrossing.pout, vertex2)) {
+    return false;
+  }
+// check if point on side of hexagon
+  if (otherPoint (crossings, currCrossing.hexagon, (currCrossing.ksidein + 1) % 6, vertex1, vertex2)) {
+    return false;
+  }
+  if (otherPoint (crossingsA, currCrossing.hexagon, (currCrossing.ksidein + 1) % 6, vertex1, vertex2)) {
+    return false;
+  }
+
+// check for the closest point - if any - on the 3rd side from vertex1
+  kOtherSide1 = (prevCrossing.ksideout + 5) % 6; // ( + 5 % 6 is -1)
+// check in crossings first
+  f1 = closestPoint (crossings, vertex1, prevCrossing.hexagon, kOtherSide1);
+// check in crossingsA too
+  f2 = closestPoint (crossingsA, vertex1, prevCrossing.hexagon, kOtherSide1);
+
+  if (f1 && !f2) return false;
+  if ( f1 && f2 && f1.dmin < f2.dmin) return false;
+  if ( f2 ) {
+    pTarg1 = f2.pfound;
+  } else {
+    pTarg1 = intermediate (vertex1,
+               prevCrossing.hexagon.vertices[kOtherSide1], 0.5);
+  }
+
+// check for the closest point - if any - on the 3rd side from vertex2
+  kOtherSide2 = (nextCrossing.ksidein + 1 ) % 6;
+// check in crossings first
+  f1 = closestPoint (crossings, vertex2, nextCrossing.hexagon, kOtherSide2);
+// check in crossingsA too
+  f2 = closestPoint (crossingsA, vertex2, nextCrossing.hexagon, kOtherSide2);
+
+  if (f1 && !f2) return false;
+  if ( f1 && f2 && f1.dmin < f2.dmin) return false;
+  if ( f2 ) {
+    pTarg2 = f2.pfound;
+  } else {
+    pTarg2 = intermediate (nextCrossing.hexagon.vertices[kOtherSide2],
+               nextCrossing.hexagon.vertices[(kOtherSide2 + 1 ) % 6], 0.5);
+  }
+
+  exp = {op: "expm60", bef: bef, aft: aft};
+  bef[0] = prevCrossing;
+  bef[1] = currCrossing;
+  bef[2] = nextCrossing;
+  aft[0] = copyCrossing(prevCrossing);
+  aft[0].pout = pTarg1;
+  aft[0].ksideout = kOtherSide1;
+  --aft[0].angle;
+
+  kNeighHex = currCrossing.hexagon.neighbour((currCrossing.ksidein + 1) % 6);
+  aft[1] = {
+    hexagon: grid[kNeighHex.ky][kNeighHex.kx],
+    ksidein: (currCrossing.ksidein + 5) % 6,
+    pin: pTarg1,
+    ksideout: (currCrossing.ksidein + 3) % 6,
+    pout: pTarg2,
+    angle:1
+  };
+
+  aft[2] = copyCrossing(nextCrossing);
+  aft[2].pin = pTarg2;
+  aft[2].ksidein = kOtherSide2;
+  --aft[2].angle;
+
+/* update crossings */
+  crossings[kPrevCrossing] = aft[0];
+  crossings[kCurrCrossing] = aft[1];
+  crossings[kNextCrossing] = aft[2];
+
+  return exp;
+} // expandm60
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+function expandpin(crossings, crossingsA, currCrossing, kCurrCrossing, nextP) {
+
+  let kPrevCrossing, prevCrossing;
+  let exp, bef, aft;
+
+  kPrevCrossing = kCurrCrossing > 0 ? kCurrCrossing - 1 : crossings.length - 1;
+  prevCrossing = crossings[kPrevCrossing];
+
+  bef = [];
+  aft = [];
+  exp = {op: 'expandpin', bef: bef, aft: aft};
+
+  bef[0] = prevCrossing;
+  bef[1] = currCrossing;
+  aft[0] = copyCrossing (prevCrossing);
+  aft[1] = copyCrossing (currCrossing);
+  aft[0].pout = nextP.pfound;
+  aft[1].pin = nextP.pfound;
+
+/* update crossings */
+  crossings[kPrevCrossing] = aft[0];
+  crossings[kCurrCrossing] = aft[1];
+
+  return exp;
+} // expandpin
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+function expandpinpout(crossings, crossingsA, currCrossing, kCurrCrossing, nextP, nextP2) {
+
+  let kPrevCrossing, prevCrossing;
+  let kNextCrossing, nextCrossing;
+  let exp, bef, aft;
+
+  kPrevCrossing = kCurrCrossing > 0 ? kCurrCrossing - 1 : crossings.length - 1;
+  prevCrossing = crossings[kPrevCrossing];
+  kNextCrossing = (kCurrCrossing ==  crossings.length - 1) ? 0 : kCurrCrossing + 1
+  nextCrossing = crossings[kNextCrossing];
+
+  bef = [];
+  aft = [];
+  exp = {op: 'expandpinpout', bef: bef, aft: aft};
+
+  bef[0] = prevCrossing;
+  bef[1] = currCrossing;
+  bef[2] = nextCrossing;
+  aft[0] = copyCrossing (prevCrossing);
+  aft[1] = copyCrossing (currCrossing);
+  aft[2] = copyCrossing (nextCrossing);
+  aft[0].pout = nextP.pfound;
+  aft[1].pin = nextP.pfound;
+  aft[1].pout = nextP2.pfound;
+  aft[2].pin = nextP2.pfound;
+
+/* update crossings */
+  crossings[kPrevCrossing] = aft[0];
+  crossings[kCurrCrossing] = aft[1];
+  crossings[kNextCrossing] = aft[2];
+
+  return exp;
+} // expandpinpout
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+function expandsplitpin (crossings, crossingsA, currCrossing, kCurrCrossing, vertex) {
+
+  let kPrevCrossing, prevCrossing;
+  let kNextCrossing, nextCrossing;
+  let exp, bef, aft;
+  let pTarg1, pTarg2;
+  let kx, ky;
+  let kOtherSide1, kOtherSide2, f2;
+
+  kPrevCrossing = kCurrCrossing > 0 ? kCurrCrossing - 1 : crossings.length - 1;
+  prevCrossing = crossings[kPrevCrossing];
+
+  kOtherSide1 = (currCrossing.ksidein + 2) % 6;
+  f2 = closestPoint (crossingsA, vertex, prevCrossing.hexagon, kOtherSide1);
+
+  if ( f2 ) {
+    pTarg1 = f2.pfound;
+  } else {
+    pTarg1 = intermediate (vertex,
+               prevCrossing.hexagon.vertices[kOtherSide1], 0.5);
+  }
+  kOtherSide2 = (currCrossing.ksidein + 1) % 6;
+  f2 = closestPoint (crossingsA, vertex, currCrossing.hexagon, kOtherSide2);
+
+  if ( f2 ) {
+    pTarg2 = f2.pfound;
+  } else {
+    pTarg2 = intermediate (vertex,
+               currCrossing.hexagon.vertices[(kOtherSide2 + 1) % 6], 0.5);
+  }
+
+  bef = [];
+  aft = [];
+  exp = {op: 'expandsplitpin', bef: bef, aft: aft, vertex: vertex};
+
+  bef[0] = prevCrossing;
+  bef[1] = currCrossing;
+  aft[0] = copyCrossing (prevCrossing);
+  aft[2] = copyCrossing (currCrossing);
+  aft[0].pout = pTarg1;
+  aft[0].ksideout = kOtherSide1;
+  --aft[0].angle;
+
+  aft[2].pin = pTarg2;
+  aft[2].ksidein = kOtherSide2;
+  --aft[2].angle;
+
+  ({kx: kx, ky: ky} = currCrossing.hexagon.neighbour(kOtherSide2));
+  aft[1] = {
+    hexagon: grid[ky][kx],
+    pin: pTarg1,
+    ksidein: (currCrossing.ksidein + 5) % 6 ,
+    pout: pTarg2,
+    ksideout: (currCrossing.ksidein + 4) % 6 ,
+    angle: 2
+  }
+/* update crossings */
+  crossings[kPrevCrossing] = aft[0];
+  crossings[kCurrCrossing] = aft[2];
+  crossings.splice(kCurrCrossing, 0, aft[1]);
+
+  return exp;
+} // expandsplitpin
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+function expandp180(crossings, crossingsA, currCrossing, kCurrCrossing, crossAin, nextP) {
+
+  let exp, bef, aft, kx, ky, kOtherSide;
+
+  bef = [];
+  aft = [];
+  exp = {op: 'expandp180', bef: bef, aft: aft};
+
+  bef[0] = currCrossing;
+  aft[0] = copyCrossing(crossAin);
+
+  kOtherSide = crossAin.ksideout;
+
+  ({kx: kx, ky: ky} = currCrossing.hexagon.neighbour(kOtherSide));
+  aft[1] = {
+    hexagon: grid[ky][kx],
+    pin: aft[0].pout,
+    ksidein: (kOtherSide + 3) % 6 ,
+    pout: nextP,
+    ksideout: (kOtherSide + 3) % 6 ,
+    angle: 3
+  }
+
+  aft[2] =  {
+    hexagon: currCrossing.hexagon,
+    pin: aft[1].pout,
+    ksidein: kOtherSide ,
+    pout: currCrossing.pout,
+    ksideout: currCrossing.ksideout ,
+    angle: currCrossing.angle - crossAin.angle - 3
+  }
+
+/* update crossings */
+  crossings[kCurrCrossing] = aft[2];
+  crossings.splice(kCurrCrossing, 0, aft[0], aft[1]);
+
+  return exp;
+
+} // expandp180
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+function expand2p120(crossings, crossingsA, currCrossing, kCurrCrossing, crossAin, vertex, nextP) {
+
+  let vertex2;
+  let nextP2;
+  let pTarg1, pTarg2;
+  let kx, ky;
+  let kOtherSide;
+  let exp, bef, aft;
+
+  const hexa = currCrossing.hexagon;
+  const kSideRef = crossAin.ksideout;
+  let hexa1, hexa2;
+
+  bef = [];
+  aft = [];
+  exp = {op: 'expand2p120', bef: bef, aft: aft};
+
+// search for point on next side
+  vertex2 = hexa.vertices[(kSideRef + 2) % 6];
+  nextP2 = closestNextPoint (crossingsA, vertex, vertex2, hexa, (kSideRef + 1) %6 );
+  if (nextP2) {
+    pTarg1 = nextP2.pfound;
+  } else {
+    pTarg1 = intermediate(vertex, vertex2, 0.5);
+  }
+
+// search for point on 3rd side of vertex
+  ({kx: kx, ky: ky} = hexa.neighbour(kSideRef));
+  hexa1 = grid[ky][kx];
+
+  ({kx: kx, ky: ky} = hexa.neighbour((kSideRef + 1) % 6));
+  hexa2 = grid[ky][kx];
+
+  kOtherSide = (kSideRef + 2) % 6;
+  vertex2 = hexa1.vertices[kOtherSide];
+  nextP2 = closestNextPoint (crossingsA, vertex, vertex2, hexa1, kOtherSide );
+
+  if (nextP2) {
+    pTarg2 = nextP2.pfound;
+  } else {
+    pTarg2 = intermediate(vertex, vertex2, 0.5);
+  }
+
+  bef[0] = currCrossing;
+  aft[0] = copyCrossing (crossAin);
+  aft[1] = {
+    hexagon: hexa1,
+    pin: aft[0].pout,
+    ksidein: (kSideRef + 3) % 6,
+    pout: pTarg2,
+    ksideout: kOtherSide,
+    angle: 2
+  }
+  aft[2] = {
+    hexagon: hexa2,
+    pin: aft[1].pout,
+    ksidein: (kOtherSide + 3) % 6,
+    pout: pTarg1,
+    ksideout: (kSideRef + 4) % 6,
+    angle: 2
+  }
+  aft[3] = copyCrossing (currCrossing);
+  aft[3].pin = pTarg1;
+  aft[3].ksidein = (kSideRef + 1) % 6;
+  aft[3].angle -= aft[0].angle + 4;
+
+/* update crossings */
+  crossings[kCurrCrossing] = aft[3];
+  crossings.splice(kCurrCrossing, 0, aft[0], aft[1], aft[2]);
+
+  return exp;
+} // expand2p120
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+function closestPoint (crossings, vertex, hexagon, kside) {
+/* searches for point closest TO VERTEX on a given side */
+/* returns false if no point on this side
+else returns distance to vertex and found point */
+
+let dist, dmin, pfound, cross;
+
+  for (let k = crossings.length - 1; k >= 0 ; --k) {
+    cross = crossings[k];
+    if (cross.hexagon != hexagon) continue;
+    if (cross.ksidein == kside) {
+      dist = distance (vertex, cross.pin);
+      if (dmin == undefined || dist < dmin) {
+        dmin = dist;
+        pfound = cross.pin;
+      }
+    }
+    if (cross.ksideout == kside) {
+      dist = distance (vertex, cross.pout);
+      if (dmin == undefined || dist < dmin) {
+        dmin = dist;
+        pfound = cross.pout;
+      }
+    }
+  } // for k
+
+  if (dmin == undefined) return false;
+  return {dmin: dmin, pfound: pfound};
+
+} // closestPoint
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+function closestNextPoint (crossings, currentP, vertex, hexagon, kside) {
+/* searches for point closest to currentP between currentP and vertex on a given side */
+/* returns false if no such point on this side
+else returns distance to vertex and found point */
+
+let dist, dmax, pfound, cross, dinit;
+  dinit = distance (vertex, currentP);
+
+  for (let k = crossings.length - 1; k >= 0 ; --k) {
+    cross = crossings[k];
+    if (cross.hexagon != hexagon) continue;
+    if (cross.ksidein == kside) {
+      dist = distance (vertex, cross.pin);
+      if (dist < dinit && (dmax == undefined || dist > dmax)) {
+        dmax = dist;
+        pfound = cross.pin;
+      }
+    }
+    if (cross.ksideout == kside) {
+      dist = distance (vertex, cross.pout);
+      if (dist < dinit && (dmax == undefined || dist > dmax)) {
+        dmax = dist;
+        pfound = cross.pout;
+      }
+    }
+  } // for k
+
+  if (dmax == undefined) return false;
+  return {dmin: dinit - dmax, pfound: pfound};
+
+} // closestNextPoint
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+function otherPoint (crossings, hexagon, side, pt, vertex) {
+
+  let crossing, dist, dist2 ;
+
+  for (let k = crossings.length - 1; k >= 0; --k) {
+    dist = undefined;
+    crossing = crossings[k];
+    if (crossing.hexagon != hexagon) continue; // no conflict here
+    if (crossing.ksideout == side) {
+     dist = distance (pt, vertex);
+     dist2 = distance (vertex, crossing.pout);
+     if (dist2 < 0.99 * dist) return true; // there is an intermediate point
+    }
+    if (crossing.ksidein == side) {
+     dist = dist || distance (pt, vertex);
+     dist2 = distance (vertex, crossing.pin);
+     if (dist2 < 0.99 * dist) return true; // there is an intermediate point
+    }
+  } // for k
+
+  return false; // no point to bother us
+}
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+function wherePinInCrossings(crossings, point) {
+
+  for (let k = crossings.length - 1 ; k >=0 ; --k) {
+    if (point == crossings[k].pin) return k;
+  } // for k crossings
+  return false;
+
+} // pointInCrossings
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+function wherePoutInCrossings(crossings, point) {
+
+  for (let k = crossings.length - 1 ; k >=0 ; --k) {
+    if (point == crossings[k].pout) return k;
+  } // for k crossings
+  return false;
+
+} // pointInCrossings
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+function pointInCrossings(crossings, point) {
+
+  return crossings.some (crossing => point == crossing.pout || point == crossing.pout);
+
+} // pointInCrossings
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+/* returns a copy of a crossing */
+function copyCrossing (crossing) {
+  return {
+           hexagon: crossing.hexagon,
+           pin: crossing.pin,
+           ksidein: crossing.ksidein,
+           pout: crossing.pout,
+           ksideout: crossing.ksideout,
+           angle: crossing.angle
+         }
+} //
+
+//------------------------------------------------------------------------
+
+function prioritizeExpansions() {
+
+/* creates expansions calling growLoop and organizes them hierarchically
+for display in proper order on canvases */
+  let maxD;
+
+// first add a depth to hierar elements - will be an index to a canvas to use
+  (function depth (hierar, baseLevel) {
+    hierar.depth = baseLevel;
+//    if (hierar.innerHier.length > 0) {
+      hierar.innerHier.forEach( hier => depth(hier, baseLevel + 1));
+//    } // if (hierar.innerHier)
+  })(hierar, 0);
+
+// then add a 'max depth' to begin expansion by deepest loop
+/* kom is the index in innerHier of deepest son
+   kom does not exist if innerHier empty ( [] )
+*/
+
+  maxD = (function maxDepth (hierar) {
+    let max = hierar.depth;
+    let md;
+    if (hierar.innerHier.length > 0) {
+      let oom = [];
+      hierar.innerHier.forEach( (hier,k) => {
+        md = maxDepth(hier);
+        if (md > max) {
+          max = md;
+          oom = [k];
+        } else if (md == max) { // memorize equal max depths to choose one randomly
+          oom.push(k);
+        }
+      });
+      hierar.kom = oom[intAlea(oom.length)]; // kom : k of max depth
+    }
+    hierar.maxDepth = max;
+    return max;
+  })(hierar);
+
+  expandTable = [];
+  hierar.innerHier.forEach (hier => {
+    setExpandDependency(hier); // and fill expandTable
+  }); // hierar.innerHier.forEach
+
+/* creates in hierarchy links reciprocal to those of 'needs' : neededFor
+  if a hierarchy only requires one lower level to be completed, it may be needed
+by several levels => neededFor is an array
+
+At the same time, computes the expansions needed to reach each hierarchy
+from the lower-level one
+*/
+  (function neededFor (hier) {
+    if (hier.needs) {
+      hier.needs.neededFor = hier.needs.neededFor || [];
+      hier.needs.neededFor.push(hier);
+    }
+    hier.innerHier.forEach (subHier => neededFor(subHier));
+    if (hier.kLoop == -1) return; // no expansion if top level
+    if (typeof hier.kom == 'undefined') {
+      hier.expansions = growLoop (tbLoops[hier.kLoop])
+    } else {
+      hier.expansions = growLoop (tbLoops[hier.innerHier[hier.kom].kLoop], tbLoops[hier.kLoop]);
+    }
+  }) (hierar);
+
+
+} // prioritizeExpansions
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+function setExpandDependency (hier, needs) {
+  if (typeof hier.kom == 'undefined') {
+    hier.needs = needs;
+    if (! needs) expandTable.push (hier);
+  }
+  hier.innerHier.forEach((subHier, k) => {
+    if (k != hier.kom ) {
+      setExpandDependency(subHier, hier);
+    }  else {
+      setExpandDependency(subHier, needs);
+      hier.needs = subHier;
+    }
+  }); // hier.innerHier[kcom]
+} // setExpandDependency
+
+//------------------------------------------------------------------------
+
+ function toBezier (crossing) {
+
+/* computes the 4 points for a Bezier cubic curve
+*/
+
+    const ztd = 0.5; // coefficient for straight lines
+    const zdt = 0.2; // coefficient for U-turn
+
+    let pa, pb;         // control points of the Bézier curve
+    let dx, dy, dd;
+    let kCommVert;        // index of common vertex
+    let din, dout;
+
+    let {hexagon: hexa, pin: p0, ksidein: kside0, pout: p1, ksideout: kside1} = crossing;
+// the curve is drawn as if entering the hexagon through point p0 and leaving it through point p1
+
+    let bin = kside0;
+    let bout = kside1;
+    let tp = perpendicular; // table of perpendiculars
+
+/* bout - bin gives (in 1/6 of turn) the direction change of the curve between entry and exit
+*/
+
+    switch (bout - bin ) {
+
+      case 3 : // straightforward
+      case -3 :
+              dd = ztd * rayHex; // probably not the smartest way
+              pa = [p0[0] + tp[bin][0] * dd ,
+                    p0[1] + tp[bin][1] * dd];
+              pb = [p1[0] + tp[bout][0] * dd ,
+                    p1[1] + tp[bout][1] * dd];
+
+               break;
+      case 1:
+      case -1:
+      case 5:
+      case -5:
+/* 120 degrees : curve around a vertex
+   compute distances from p0 and p1 to that vertex and use these distances
+   to compute position of intermediate Bezier control points pa and pb
+*/
+              if (bout - bin == -1 || bout - bin == 5) {
+                kCommVert = bin;
+              } else {
+                kCommVert = bout;
+              }
+
+              din = distance (hexa.vertices[kCommVert], p0);
+              dout = distance (hexa.vertices[kCommVert], p1);
+
+              dd = 0.6;
+
+              pa = [p0[0] + tp[bin][0] * dd * dout ,
+                    p0[1] + tp[bin][1] * dd * dout];
+              pb = [p1[0] + tp[bout][0] * dd * din ,
+                    p1[1] + tp[bout][1] * dd * din];
+
+               break;
+      case 2:
+      case -2:
+      case 4: // 60 degrees
+      case -4:
+              dd =  0.6 * rayHex; // probably not the smartest way
+              pa = [p0[0] + tp[bin][0] * dd ,
+                    p0[1] + tp[bin][1] * dd];
+              pb = [p1[0] + tp[bout][0] * dd ,
+                    p1[1] + tp[bout][1] * dd];
+
+               break;
+
+      case 0 :   // U-turn
+              dx = p1[0] - p0[0];
+              dy = p1[1] - p0[1];
+              dd = zdt * rayHex;
+
+              pa = [p0[0] + tp[bin][0] * dd ,
+                    p0[1] + tp[bin][1] * dd];
+              pb = [p1[0] + tp[bin][0] * dd ,
+                    p1[1] + tp[bin][1] * dd];
+              break;
+      default:
+              throw ('unforeseen angle');
+    } // switch
+
+    return [p0, pa, pb, p1];
+
+  } // toBezier;
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+ function drawBezier (points, first) {
+
+/* draws a cubic Bezier curve
+*/
+/* The 'first' parameter is just used to draw the very first
+line in each loop.
+it needs a 'ctx.moveTo' to define the starting position. Following parts of the
+loop just need a 'ctx.BezierCurveTo'
+
+Defines the path but does not actually draw it ( no 'beginPath' nor 'stroke or 'fill')
+*/
+
+    let p0, p1, pa, pb;         // control points of the Bézier curve
+
+    [p0, pa, pb, p1] = points;
+    if (first) ctx.moveTo(p0[0], p0[1]);
+    ctx.bezierCurveTo( pa[0], pa[1], pb[0], pb[1], p1[0], p1[1]);
+
+  } // drawBezier
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+ function drawCrossing (crossing, first) {
+
+/* draws a crossing
+*/
+/* The 'first' parameter is just used to draw the very first
+line in each loop.
+it needs a 'ctx.moveTo' to define the starting position. Following parts of the
+loop just need a 'ctx.BezierCurveTo'
+
+Defines the path but does not actually draw it ( no 'beginPath' nor 'stroke or 'fill')
+*/
+
+    let p0, p1, pa, pb;         // control points of the Bézier curve
+    drawBezier(toBezier (crossing), first);
+
+  } // drawCrossing
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+function loopToBezier (crossings) {
+
+  // converts an array of crossings into an array of points for Bezier curves
+  let loopB= [];
+  crossings.forEach(crossing => loopB.push(toBezier(crossing)));
+  return loopB
+}
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+function drawBezierLoop (loopB, color, stroke) {
+/* actually draws, from an array of arrays of Bezier point */
+
+  let first = true;
+  ctx.beginPath();
+  loopB.forEach (points => {
+    drawBezier(points, first);
+    first = false;
+  }); // loopToBezier.forEach
+
+  if (stroke) {
+    ctx.strokeStyle =  color;
+    ctx.closePath();
+    ctx.stroke();
+  } else {
+    ctx.fillStyle = color;
+    ctx.fill();
+  }
+
+} // drawBezierLoop
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+function drawLoop (loop, stroke) {
+/* actually draws */
+
+  ctx.lineWidth = 2;
+  drawBezierLoop (loopToBezier(loop.crossings), loop.color, stroke);
+
+} //  drawLoop
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+function drawGrid() {
+
+  if (!displayGrid) return;
+
+  ctx.lineCap = 'round';
+
+  grid.forEach (line => {
+    line.forEach (hexa => {
+      ctxGrid.fillStyle = '#8FF';
+      hexa.points.forEach (point => {
+        ctxGrid.beginPath();
+        ctxGrid.arc(point[0], point[1], 3, 0, m2PI);
+        ctxGrid.fill();
+      });
+      hexa.drawHexagon();
+    });
+  });
+
+
+} // function drawEverything
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+function drawPoint (p, color= '#F00') { // pour tests seulement
+/* for tests only */
+  ctx.lineWidth = 4;
+  ctx.strokeStyle = color;
+  ctx.beginPath();
+  ctx.moveTo (p[0]-8 ,p[1]); ctx.lineTo (p[0]+8 ,p[1]);
+  ctx.moveTo (p[0] ,p[1]-8); ctx.lineTo (p[0] ,p[1]+8);
+  ctx.stroke();
+} // drawPoint
+
+//-----------------------------------------------------------------------------
+
+function startOver() {
+
+
+
+  rayHex = nRayHex;
+
+// canvas dimensions
+
+  maxx = window.innerWidth; 
+  maxy = window.innerHeight;
+//  maxx = 500;
+//  maxy = 500;
+
+  canv.style.left = ((window.innerWidth ) - maxx) / 2 + 'px';
+  canv.style.top = window.innerHeight;
+
+   if (canv.width != maxx)  canv.width = maxx;
+   if (canv.height != maxy)  canv.height = maxy;
+
+  ctxGrid.canvas.width = canv.width;
+  ctxGrid.canvas.height = canv.height;
+  ctxGrid.canvas.style.left = canv.style.left;
+  ctxGrid.canvas.style.top = canv.style.top;
+
+// number of columns / rows
+// computed to have (0,0) in top leftmost corner
+// and for all hexagons to be fully contained in canvas
+
+  nbx = mfloor(((maxx / rayHex) - 0.5) / 1.5);
+  nby = mfloor(maxy / rayHex / rac3 - 0.5); //
+
+  if (! seeOuterZone) {
+    nbx += 2;
+    nby += 2;
+  } //
+
+  if (nbx < 1 || nby < 1) return; // nothing to do
+  orgx = (maxx - rayHex * (1.5 * nbx + 0.5)) / 2  + rayHex; // obvious, no ?
+  orgy = (maxy - (rayHex * rac3 * (nby + 0.5))) / 2 + rayHex * rac3; // yet more obvious
+
+/* position of hexagon vertices, relative to its center */
+  vertices = [[],[],[],[],[],[]] ;
+// x coordinates, from left to right
+  vertices[3][0] = - rayHex;
+  vertices[2][0] = vertices[4][0] = - rayHex / 2;
+  vertices[1][0] = vertices[5][0] = + rayHex / 2;
+  vertices[0][0] = rayHex;
+// y coordinates, from top to bottom
+  vertices[4][1] = vertices[5][1] = - rayHex * rac3s2;
+  vertices[0][1] = vertices[3][1] = 0;
+  vertices[1][1] = vertices[2][1] = rayHex * rac3s2;
+
+} // startOver
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+function clickCanvas(event) {
+  if (event.target.tagName == 'CANVAS')  events.push({event: 'click'});
+}// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+function resize() {
+  events.push({event: 'resize'});
+}
+//------------------------------------------------------------------------
+{  // scope for animate
+
+  let state;
+  let tbAnim;
+
+  const ST_INIT = 0;
+  const ST_startOver = 1;
+  const ST_CreateGrid = 2;
+  const ST_analyseLoops = 3;
+  const ST_prioritizeLoops = 4;
+  const ST_sizeEverything = 5;
+  const ST_prioritizeExpansions = 6;
+  const ST_prepareCanvases = 7;
+  const ST_ANIM = 8;
+  const ST_WAIT = 9;
+
+
+  events.push ({event: 'init'});
+
+  (function animate(tstamp) {
+    let event;
+
+    while (event = events.shift()) {
+      switch (event.event) {
+        case 'init' :
+        case 'click' :
+        case 'resize' :
+          state = ST_INIT;
+          break;
+      } //switch (event.event)
+
+    } // while events
+
+    switch (state) {
+      case ST_INIT :
+        state++;
+        break;
+      case ST_startOver :
+      case ST_CreateGrid :
+      case ST_analyseLoops :
+      case ST_prioritizeLoops :
+      case ST_sizeEverything :
+      case ST_prioritizeExpansions :
+        [startOver, createGrid, analyseLoops, prioritizeLoops,
+         sizeEverything, prioritizeExpansions][state - ST_startOver]();
+         if (state == ST_startOver && nbx < 3 && nby < 3 ) {
+           // blocking situation -> avoid it
+           state = ST_WAIT -1; // jump to wait state
+         }
+        ++state;
+        break;
+
+      case ST_prepareCanvases :
+//        drawEverything();
+//        prepareCanvases(hierar.maxDepth);
+// prepare 1st level of animation
+        tbAnim = [];
+        expandTable.forEach (hierar => {
+          tbAnim.push (hierar);
+        }); // prepare for 1st level of animation
+        drawGrid();
+        ++state;
+        break;
+      case ST_ANIM :
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+        ctx.fillRect(0,0,maxx, maxy);
+        if (tbAnim.length > 0) {
+          tbAnim.forEach((animHier, k) => { // can skip some animations due to the splice inside, but does not really matter
+            if (animateHier(animHier, tstamp)== false) {
+              tbAnim.splice (k,1); // remove animation when finished
+            }
+          });
+        } else {
+          ++state;
+          if (autorun) {
+            setTimeout (() => events.push({event: 'click'}), 3);
+            ++state;
+          }
+        }
+        break;
+      case ST_WAIT :
+          if (autorun) events.push({event: 'click'}); // if autorun clicked while waiting
+
+    } // switch (state)
+
+    window.requestAnimationFrame(animate);
+  })(); // animate
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+function animateHier(animHier, tStamp) {
+
+// must return true if animation must go on and false if end of animation
+
+  if (!animHier.state) { // initialization
+    animHier.state = 1;
+    animHier.animsInPr = [];
+    animHier.path = [];
+    if (!animHier.expansions.expansions[0].bef) {
+      animHier.animsInPr.push (animHier.expansions.expansions[0]); // start with 1st exp
+      // create path with a single expansion
+      animHier.path.push ({nature: 'exp', obj: animHier.expansions.expansions[0]});
+    } else {
+      // create path from ordered crossings of initial loop
+      animHier.expansions.init.forEach(crossing => animHier.path.push ({nature: 'crossing', obj: crossing}));
+      animHier.expansions.expansions.forEach (exp => {
+        exp.bef.forEach(crossing => {
+          exp.cntPre = 0;  // reset launching counters
+        }); // exp.bef.forEach
+        exp.bef.forEach(crossing => {
+          if (crossing.initial) {
+            pushExpIfReady(exp, animHier);
+          }
+        }); // exp.bef.forEach
+      }); // animHier.expansions.expansions.forEach
+    }
+    return true;
+  }
+
+  switch (animHier.state) {
+    case 1 : // waiting for end of animation
+      if (animHier.animsInPr.length > 0) {
+          for (let k = animHier.animsInPr.length - 1; k>= 0; --k) {
+            animateExpand(animHier.animsInPr[k], tStamp, animHier, k);
+          }
+          drawAnim(animHier);
+
+      } else {                         // finished
+          drawLoop(tbLoops[animHier.kLoop], true);
+
+        if (animHier.neededFor) { // launch new animations
+          animHier.neededFor.forEach (hier => tbAnim.push(hier));
+        }
+        return false;
+      }
+      break;
+  } // switch
+  return true;
+} // animateHier
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+function animateExpand(exp, tStamp, animHier, kInPr) {
+
+  let idxExp, idxCross;
+
+  if (! exp.state) {   // initialisation
+    exp.state = 1;     // waiting for all predecessors
+    exp.tDuration = intAlea(durmin, durmax); // waiting for a more clever
+    exp.tStart = tStamp;
+
+    exp.interms = [];
+    if (exp.bef) {
+
+      exp.interms = Array.from(exp.bef, crossing => crossing.bezier);
+      idxCross = animHier.path.findIndex(pathElem =>
+        pathElem.nature == 'crossing' && pathElem.obj == exp.bef[0]);
+      // remove crossings and add exp in path
+      while (idxCross + exp.bef.length > animHier.path.length) {
+        animHier.path.push (animHier.path.shift());
+        --idxCross;
+      }
+      animHier.path.splice(idxCross, exp.bef.length, {nature: 'exp', obj: exp});
+    }
+  }
+
+  switch (exp.state) {
+    case 1 :
+      let deltaT = (tStamp - exp.tStart) / exp.tDuration;
+      if (deltaT < 1) {
+        switch (exp.op) {
+          case 'init180' : animInit180(exp, deltaT); break;
+          case 'init120' : animInit120(exp, deltaT); break;
+          case 'expandpin' : animExppin(exp, deltaT); break;
+          case 'expandpinpout' : animExppinpout(exp, deltaT); break;
+          case 'expandsplitpin' : animExpsplitpin(exp, deltaT); break;
+          case 'expm180' : animExpm180(exp, deltaT); break;
+          case 'exp2m120' : animExp2m120(exp, deltaT); break;
+          case 'expm120' : animExpm120(exp, deltaT); break;
+          case 'expm60' : animExpm60(exp, deltaT); break;
+          case 'expandp180' : animExpp180(exp, deltaT); break;
+          case 'expand2p120' : animExp2p120(exp, deltaT); break;
+        }
+      } else { // end of animation...
+        animHier.animsInPr.splice(kInPr, 1); // ended, remove animation
+
+        // replace exp by aft crossings in path
+
+        idxExp = animHier.path.findIndex(pathElem =>
+          pathElem.nature == 'exp' && pathElem.obj == exp);
+
+        animHier.path[idxExp] = { nature: 'crossing', obj: exp.aft[0] };
+        for (let k = 1; k < exp.aft.length ; ++k) {
+          animHier.path.splice (++idxExp,0, { nature: 'crossing', obj: exp.aft[k] });
+        } // for k;
+
+        exp.aft.forEach (aft => {
+          if (aft.expAfter) {         // run animations which come after this one
+            pushExpIfReady(aft.expAfter, animHier);
+          // does not (yet) chain with rest of expansions
+          }
+        });
+        
+      } // if end of expansion
+      break;
+
+  } // switch
+
+} // animateExpand
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+function animInit180 (exp, alpha) {
+  let bez1 = exp.aft[0].bezier;
+  let bez2 = exp.aft[1].bezier;
+  if (! exp.centre) { // not yet computed central point
+    exp.centre = intermediate (bez1[0], bez1[3], 0.5);
+  }
+  let pa = intermediate (exp.centre, bez1[0], alpha);
+  let pb = intermediate (exp.centre, bez1[3], alpha);
+  exp.interms = [[pa, intermediate(exp.centre, bez1[1], alpha), intermediate(exp.centre, bez1[2], alpha), pb ],
+                 [pb, intermediate(exp.centre, bez2[1], alpha), intermediate(exp.centre, bez2[2], alpha), pa ]];
+
+} // animInit180
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+function animInit120 (exp, alpha) {
+  let bez1 = exp.aft[0].bezier;
+  let bez2 = exp.aft[1].bezier;
+  let bez3 = exp.aft[2].bezier;
+  if (! exp.centre) { // not yet computed central point
+    exp.centre = [(bez1[0][0] + bez2[0][0] + bez3[0][0]) / 3,
+                  (bez1[0][1] + bez2[0][1] + bez3[0][1]) / 3];
+  }
+  let pa = intermediate (exp.centre, bez1[0], alpha);
+  let pb = intermediate (exp.centre, bez2[0], alpha);
+  let pc = intermediate (exp.centre, bez3[0], alpha);
+
+  exp.interms = [[pa, intermediate(exp.centre, bez1[1], alpha), intermediate(exp.centre, bez1[2], alpha), pb ],
+                 [pb, intermediate(exp.centre, bez2[1], alpha), intermediate(exp.centre, bez2[2], alpha), pc ],
+                 [pc, intermediate(exp.centre, bez3[1], alpha), intermediate(exp.centre, bez3[2], alpha), pa ]];
+
+} // animInit120
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+function animExppin (exp, alpha) {
+
+  let bez1 = exp.bef[0].bezier;
+  let bez2 = exp.bef[1].bezier;
+  let bez3 = exp.aft[0].bezier;
+  let bez4 = exp.aft[1].bezier;
+
+  let pint = intermediate (bez1[3],  bez3[3], alpha);
+
+  exp.interms = [[bez1[0],
+                  intermediate(bez1[1], bez3[1], alpha),
+                  intermediate(bez1[2], bez3[2], alpha),
+                  pint],
+                  [pint,
+                  intermediate(bez2[1], bez4[1], alpha),
+                  intermediate(bez2[2], bez4[2], alpha),
+                  bez2[3]]];
+} // animExppin
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+function animExppinpout (exp, alpha) {
+
+  let bez1 = exp.bef[0].bezier;
+  let bez2 = exp.bef[1].bezier;
+  let bez3 = exp.bef[2].bezier;
+  let bez4 = exp.aft[0].bezier;
+  let bez5 = exp.aft[1].bezier;
+  let bez6 = exp.aft[2].bezier;
+
+  let pinta = intermediate (bez1[3],  bez4[3], alpha);
+  let pintb = intermediate (bez2[3],  bez5[3], alpha);
+
+  exp.interms = [[bez1[0],
+                  intermediate(bez1[1], bez4[1], alpha),
+                  intermediate(bez1[2], bez4[2], alpha),
+                  pinta],
+                 [pinta,
+                  intermediate(bez2[1], bez5[1], alpha),
+                  intermediate(bez2[2], bez5[2], alpha),
+                  pintb],
+                 [pintb,
+                  intermediate(bez3[1], bez6[1], alpha),
+                  intermediate(bez3[2], bez6[2], alpha),
+                  bez3[3]]];
+} // animExppinpout
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+function animExpsplitpin (exp, alpha) {
+
+  let pa, pb, pc, pd, pe, pf;
+
+  let bez1 = exp.bef[0].bezier;
+  let bez2 = exp.bef[1].bezier;
+  let bez3 = exp.aft[0].bezier;
+  let bez5 = exp.aft[2].bezier;
+  let bez6, bez7;
+//  let vertex = exp.vertex;
+
+  if (! exp.bez6) { // initialisation of animation
+
+    // decompose aft[1] into two parts
+    [bez6, bez7] = splitBezier(exp.aft[1].bezier, 0.5) // 0.5 to redefined
+    exp.bez6 = bez6;
+    exp.bez7 = bez7;
+
+  } // initialisation
+
+  [pa, pb, pc] = interpolateBezierConnection(
+                   bez1[2], bez1[3], bez1[3],
+                   bez3[2], bez3[3], exp.bez6[1], alpha);
+  [pf, pe, pd] = interpolateBezierConnection(
+                   bez2[1], bez2[0], bez2[0],
+                   bez5[1], bez5[0], exp.bez7[2], alpha);
+
+  let pintc = intermediate (bez1[3], exp.bez7[0], alpha);
+  exp.interms = [[bez3[0],
+                  intermediate (bez1[1], bez3[1], alpha),
+                  pa,
+                  pb],
+                 [pb,
+                  pc,
+                  intermediate (bez1[3], exp.bez6[2], alpha),
+                  pintc],
+                 [pintc,
+                  intermediate (bez1[3], exp.bez7[1], alpha),
+                  pd,
+                  pe],
+                 [pe,
+                  pf,
+                  intermediate(bez2[2], bez5[2], alpha),
+                  bez5[3]]];
+
+
+} // animExpsplitpin
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+function animExpm120 (exp, alpha) {
+
+/* about the same as animExpsplitpin, but the opposite way ...
+*/
+  let pa, pb, pc, pd, pe, pf;
+
+  let bez1 = exp.aft[0].bezier;
+  let bez2 = exp.aft[1].bezier;
+  let bez3 = exp.bef[0].bezier;
+  let bez5 = exp.bef[2].bezier;
+  let bez6, bez7;
+//  let vertex = exp.vertex;
+
+  if (! exp.bez6) { // initialisation of animation
+
+    // decompose bef[1] into two parts
+    [bez6, bez7] = splitBezier(exp.bef[1].bezier, 0.5) // 0.5 to redefined
+    exp.bez6 = bez6;
+    exp.bez7 = bez7;
+
+  } // initialisation
+
+
+  [pa, pb, pc] = interpolateBezierConnection(
+                   bez1[2], bez1[3], bez1[3],
+                   bez3[2], bez3[3], exp.bez6[1], 1 - alpha);
+  [pf, pe, pd] = interpolateBezierConnection(
+                   bez2[1], bez2[0], bez2[0],
+                   bez5[1], bez5[0], exp.bez7[2], 1 - alpha);
+
+  let pintc = intermediate (bez1[3], exp.bez7[0], 1 - alpha);
+  exp.interms = [[bez3[0],
+                  intermediate (bez1[1], bez3[1], 1 - alpha),
+                  pa,
+                  pb],
+                 [pb,
+                  pc,
+                  intermediate (bez1[3], exp.bez6[2], 1 - alpha),
+                  pintc],
+                 [pintc,
+                  intermediate (bez1[3], exp.bez7[1], 1 - alpha),
+                  pd,
+                  pe],
+                 [pe,
+                  pf,
+                  intermediate(bez2[2], bez5[2], 1 - alpha),
+                  bez5[3]]];
+
+
+} // animExpm120
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+function animExpm180 (exp, alpha) {
+
+  let beza, bezb, bezc, bezd;
+
+  if (! exp.lnga) { // initialisation of animation
+    let crs = exp.aft[0].bezier;
+    exp.lnga = distance(crs[0], crs[1]);
+    exp.lngd = distance(crs[2], crs[3]);
+
+    crs = exp.bef[1].bezier;
+    exp.lngb = distance(crs[0], crs[1]);
+    exp.lngc = distance(crs[2], crs[3]);
+  } // initialisation
+
+  [beza, bezb] = splitBezier(exp.bef[0].bezier, 1 - alpha);
+  [bezc, bezd] = splitBezier(exp.bef[2].bezier, alpha);
+
+  let dv = lerp(exp.lngb, exp.lnga, alpha);
+  let dact = distance (bezb[0], bezb[1]);
+  if (dact < 0.1) {
+    bezb[1] = exp.bef[1].bezier[1];
+  } else {
+    bezb[1] = intermediate (bezb[0], bezb[1], dv / dact);
+  }
+  dv = lerp(exp.lngc, exp.lngd, alpha);
+  dact = distance (bezc[2], bezc[3]);
+  if (dact < 0.1) {
+    bezb[2] = exp.bef[1].bezier[2];
+  } else {
+    bezb[2] = intermediate (bezc[3], bezc[2], dv / dact);
+  }
+  bezb[3] = bezc[3];
+
+  exp.interms = [beza, bezb, bezd];
+
+} // animExpm180
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+function animExp2m120 (exp, alpha) {
+
+  let crossa, crossb, crossc, crossd;
+  let beza, bezb, bezc, bezd, beze;
+  let dref1, dref2;
+  let  pb0, pb1, pc2, pd0, pa2, pd1;
+
+  if (! exp.tlim) { // initialisation of animation
+    exp.tlim = 0.4; // arbitrary  limit - 'body growth' from 0 to tlim, 'head growth' from tlim to 1
+    crossa = exp.bef[0];
+    crossb = exp.bef[1];
+    crossc = exp.bef[2];
+    crossd = exp.bef[3];
+
+    pa2 = crossa.bezier[2];
+    pb0 = crossb.bezier[0];
+    pb1 = crossb.bezier[1];
+    pc2 = crossc.bezier[2];
+    pd0 = crossd.bezier[0];
+    pd1 = crossd.bezier[1];
+
+    let vertex = crossa.hexagon.vertices[crossa.ksideout];
+
+    let db = distance (pb0, vertex);
+    let dd = distance (pd0, vertex);
+    let perpb = [pb1[0] - pb0[0], pb1[1] - pb0[1]];
+    let perpd = [pc2[0] - pd0[0], pc2[1] - pd0[1]];
+    let lperpb = mhypot (perpb[0] , perpb[1]);
+    let lperpd = mhypot (perpd[0] , perpd[1]);
+    dref1 = dd; // by default
+    dref2 = lperpd;
+
+    exp.mvb = false;
+    exp.mvd = false;
+
+    if (db > dd + 0.1) { // if point B must be moved
+      exp.mvb = true;
+      pb0 = intermediate (vertex, pb0, dref1 / db);
+      pb1 = [pb0[0] + perpb[0] * dref2 / lperpb , pb0[1] + perpb[1] * dref2 / lperpb];
+      pa2 = [pb0[0] + pa2[0] - crossa.bezier[3][0], pb0[1] + pa2[1] - crossa.bezier[3][1]];
+    }
+
+    if (dd > db + 0.1) { // if point D must be moved
+      exp.mvd = true;
+      dref1 = db;
+      dref2 = lperpb;
+      pd0 = intermediate (vertex, pd0, dref1 / dd);
+      pc2 = [pd0[0] + perpd[0] * dref2 / lperpd, pd0[1] + perpd[1] * dref2 / lperpd];
+      pd1 = [pd0[0] + pd1[0] - crossd.bezier[0][0], pd0[1] + pd1[1] - crossd.bezier[0][1]];
+    }
+
+    beze = [pb0, pb1, pc2, pd0];
+    [bezb, bezc] = splitBezier(beze, 0.5);
+    beza = [crossa.bezier[0], crossa.bezier[1], pa2, pb0];
+    bezd = [pd0, pd1, crossd.bezier[2], crossd.bezier[3]];
+
+    exp.beza = beza;
+    exp.bezb = bezb;
+    exp.bezc = bezc;
+    exp.bezd = bezd;
+    exp.beze = beze;
+    exp.lnga = distance (exp.aft[0].bezier[0], exp.aft[0].bezier[1]);
+    exp.lngb = distance (beze[0], beze[1]);
+    exp.lngc = distance (beze[2], beze[3]);
+    exp.lngd = distance (exp.aft[0].bezier[2], exp.aft[0].bezier[3]);
+
+  } // initialisation
+
+  if (alpha < exp.tlim) { // 1st part         (alpha == 0..tlim)
+    alpha = alpha / exp.tlim; // expand
+    beza = exp.beza.slice();
+    bezb = exp.bezb.slice();
+    bezc = exp.bezc.slice();
+    bezd = exp.bezd.slice();
+
+    exp.interms = [beza, bezb, bezc, bezd];
+
+    if (exp.mvb) {
+      beza[2] = intermediate (exp.bef[0].bezier[2], beza[2], alpha);
+      beza[3] = intermediate (exp.bef[0].bezier[3], beza[3], alpha);
+      bezb[0] = beza[3];
+    }
+    if (exp.mvd) {
+      bezd[1] = intermediate (exp.bef[3].bezier[1], bezd[1], alpha);
+      bezd[0] = intermediate (exp.bef[3].bezier[0], bezd[0], alpha);
+      bezc[3] = bezd[0];
+    }
+    bezb[1] = intermediate (exp.bef[1].bezier[1], bezb[1], alpha);
+    bezb[2] = intermediate (exp.bef[1].bezier[2], bezb[2], alpha);
+    bezb[3] = intermediate (exp.bef[1].bezier[3], bezb[3], alpha);
+    bezc[0] = bezb[3];
+    bezc[1] = intermediate (exp.bef[2].bezier[1], bezc[1], alpha);
+    bezc[2] = intermediate (exp.bef[2].bezier[2], bezc[2], alpha);
+
+  } else {                    // 2nd part (alpha == tlim..1)
+    alpha = (alpha - exp.tlim ) / (1 - exp.tlim);
+
+    [beza, bezb] = splitBezier (exp.beza, 1 - alpha);
+    [bezc, bezd] = splitBezier (exp.bezd, alpha);
+
+    let dv = lerp(exp.lngb, exp.lnga, alpha)
+    let dact = distance (bezb[0], bezb[1]);
+    if (dact < 0.1) {
+      bezb[1] = exp.beze[1];
+    } else {
+      bezb[1] = intermediate (bezb[0], bezb[1], dv / dact);
+    }
+    dv = lerp(exp.lngc , exp.lngd, alpha);
+    dact = distance (bezc[2], bezc[3]);
+    if (dact < 0.1) {
+      bezb[2] = exp.beze[2];
+    } else {
+      bezb[2] = intermediate (bezc[3], bezc[2], dv / dact);
+    }
+    bezb[3] = bezc[3];
+    exp.interms = [beza, bezb, bezd];
+  }
+
+
+} // animExp2m120
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+function animExpm60 (exp, alpha) {
+
+  let bezi, pbef, paft;
+
+  if (! exp.dista1bef) { // initialisation of animation
+    bezi = exp.bef[0].bezier;
+    exp.pa = bezi[0];
+    pbef = bezi[3];
+    exp.dira1bef = diffPoints(pbef, bezi[2]);
+    exp.dista1bef = mhypot(exp.dira1bef[0], exp.dira1bef[1]);
+    bezi = exp.aft[0].bezier;
+    paft = bezi[3];
+    exp.dira1aft = diffPoints(paft, bezi[2]);
+    exp.dista1aft = mhypot(exp.dira1aft[0], exp.dira1aft[1]);
+
+    bezi = exp.bef[1].bezier;
+    exp.dirb0bef = diffPoints(pbef, bezi[1]);
+    exp.distb0bef = mhypot(exp.dirb0bef[0], exp.dirb0bef[1]);
+    pbef = bezi[3];
+    exp.dirb1bef = diffPoints(pbef, bezi[2]);
+    exp.distb1bef = mhypot(exp.dirb1bef[0], exp.dirb1bef[1]);
+
+    bezi = exp.aft[1].bezier;
+    exp.dirb0aft = diffPoints(paft, bezi[1]);
+    exp.distb0aft = mhypot(exp.dirb0aft[0], exp.dirb0aft[1]);
+    paft = bezi[3];
+    exp.dirb1aft = diffPoints(paft, bezi[2]);
+    exp.distb1aft = mhypot(exp.dirb1aft[0], exp.dirb1aft[1]);
+
+    bezi = exp.bef[2].bezier;
+    exp.dirc0bef = diffPoints (pbef, bezi[1]);
+    exp.distc0bef = mhypot(exp.dirc0bef[0], exp.dirc0bef[1]);
+    bezi = exp.aft[2].bezier;
+    exp.dirc0aft = diffPoints (paft, bezi[1]);
+    exp.distc0aft = mhypot(exp.dirc0aft[0], exp.dirc0aft[1]);
+    exp.pd = bezi[3];
+
+  } // initialisation
+
+  pbef = intermediate (exp.bef[0].bezier[3], exp.aft[0].bezier[3], alpha);
+  paft = intermediate (exp.bef[1].bezier[3], exp.aft[1].bezier[3], alpha);
+
+  exp.interms = [[exp.pa,
+                  intermediate(exp.bef[0].bezier[1], exp.aft[0].bezier[1], alpha),
+                  dirPoint(pbef, lerp (exp.dista1bef, exp.dista1aft, alpha), intermediate (exp.dira1bef, exp.dira1aft, alpha)),
+                  pbef],
+                 [pbef,
+                  dirPoint(pbef, lerp (exp.distb0bef, exp.distb0aft, alpha), intermediate (exp.dirb0bef, exp.dirb0aft, alpha)),
+                  dirPoint(paft, lerp (exp.distb1bef, exp.distb1aft, alpha), intermediate (exp.dirb1bef, exp.dirb1aft, alpha)),
+                  paft],
+                 [paft,
+                  dirPoint(paft, lerp (exp.distc0bef, exp.distc0aft, alpha), intermediate (exp.dirc0bef, exp.dirc0aft, alpha)),
+                  intermediate(exp.bef[2].bezier[2], exp.aft[2].bezier[2], alpha),
+                  exp.pd]];
+
+} // animExpm60
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+function animExpp180 (exp, alpha) {
+
+  let beza, bezb, bezc, bezd;
+
+  alpha = 1 - alpha;
+
+  if (! exp.lnga) { // initialisation of animation
+    let crs = exp.bef[0].bezier;
+    exp.lnga = distance(crs[0], crs[1]);
+    exp.lngd = distance(crs[2], crs[3]);
+
+    crs = exp.aft[1].bezier;
+    exp.lngb = distance(crs[0], crs[1]);
+    exp.lngc = distance(crs[2], crs[3]);
+  } // initialisation
+
+  [beza, bezb] = splitBezier(exp.aft[0].bezier, 1 - alpha);
+  [bezc, bezd] = splitBezier(exp.aft[2].bezier, alpha);
+
+  let dv = lerp(exp.lngb, exp.lnga, alpha);
+  let dact = distance (bezb[0], bezb[1]);
+  if (dact < 0.1) {
+    bezb[1] = exp.aft[1].bezier[1];
+  } else {
+    bezb[1] = intermediate (bezb[0], bezb[1], dv / dact);
+  }
+  dv = lerp(exp.lngc, exp.lngd, alpha);
+  dact = distance (bezc[2], bezc[3]);
+  if (dact < 0.1) {
+    bezb[2] = exp.aft[1].bezier[2];
+  } else {
+    bezb[2] = intermediate (bezc[3], bezc[2], dv / dact);
+  }
+  bezb[3] = bezc[3];
+
+  exp.interms = [beza, bezb, bezd];
+
+} // animExpp180
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+function animExp2p120 (exp, alpha) {
+
+// like animExp2m120, but the opposite way
+
+  let crossa, crossb, crossc, crossd;
+  let beza, bezb, bezc, bezd, beze;
+  let dref1, dref2;
+  let  pb0, pb1, pc2, pd0, pa2, pd1;
+
+  if (! exp.tlim) { // initialisation of animation
+    exp.tlim = 0.4; // arbitrary  limit - 'body growth' from 0 to tlim, 'head growth' from tlim to 1
+    crossa = exp.aft[0];
+    crossb = exp.aft[1];
+    crossc = exp.aft[2];
+    crossd = exp.aft[3];
+
+    pa2 = crossa.bezier[2];
+    pb0 = crossb.bezier[0];
+    pb1 = crossb.bezier[1];
+    pc2 = crossc.bezier[2];
+    pd0 = crossd.bezier[0];
+    pd1 = crossd.bezier[1];
+
+    let vertex = crossa.hexagon.vertices[(crossa.ksideout + 1) % 6];
+
+    let db = distance (pb0, vertex);
+    let dd = distance (pd0, vertex);
+    let perpb = [pb1[0] - pb0[0], pb1[1] - pb0[1]];
+    let perpd = [pc2[0] - pd0[0], pc2[1] - pd0[1]];
+    let lperpb = mhypot (perpb[0] , perpb[1]);
+    let lperpd = mhypot (perpd[0] , perpd[1]);
+    dref1 = dd; // by default
+    dref2 = lperpd;
+
+    exp.mvb = false;
+    exp.mvd = false;
+
+    if (db > dd + 0.1) { // if point B must be moved
+      exp.mvb = true;
+      pb0 = intermediate (vertex, pb0, dref1 / db);
+      pb1 = [pb0[0] + perpb[0] * dref2 / lperpb , pb0[1] + perpb[1] * dref2 / lperpb];
+      pa2 = [pb0[0] + pa2[0] - crossa.bezier[3][0], pb0[1] + pa2[1] - crossa.bezier[3][1]];
+    }
+
+    if (dd > db + 0.1) { // if point D must be moved
+      exp.mvd = true;
+      dref1 = db;
+      dref2 = lperpb;
+      pd0 = intermediate (vertex, pd0, dref1 / dd);
+      pc2 = [pd0[0] + perpd[0] * dref2 / lperpd, pd0[1] + perpd[1] * dref2 / lperpd];
+      pd1 = [pd0[0] + pd1[0] - crossd.bezier[0][0], pd0[1] + pd1[1] - crossd.bezier[0][1]];
+    }
+
+    beze = [pb0, pb1, pc2, pd0];
+    [bezb, bezc] = splitBezier(beze, 0.5);
+    beza = [crossa.bezier[0], crossa.bezier[1], pa2, pb0];
+    bezd = [pd0, pd1, crossd.bezier[2], crossd.bezier[3]];
+
+    exp.beza = beza;
+    exp.bezb = bezb;
+    exp.bezc = bezc;
+    exp.bezd = bezd;
+    exp.beze = beze;
+    exp.lnga = distance (exp.bef[0].bezier[0], exp.bef[0].bezier[1]);
+    exp.lngb = distance (beze[0], beze[1]);
+    exp.lngc = distance (beze[2], beze[3]);
+    exp.lngd = distance (exp.bef[0].bezier[2], exp.bef[0].bezier[3]);
+
+  } // initialisation
+
+  alpha = (1 - alpha); // revert time
+
+  if (alpha < exp.tlim) { // 2nd part         (1 - alpha == 0..tlim)
+    alpha = alpha / exp.tlim; // expand
+    beza = exp.beza.slice();
+    bezb = exp.bezb.slice();
+    bezc = exp.bezc.slice();
+    bezd = exp.bezd.slice();
+
+    exp.interms = [beza, bezb, bezc, bezd];
+
+    if (exp.mvb) {
+      beza[2] = intermediate (exp.aft[0].bezier[2], beza[2], alpha);
+      beza[3] = intermediate (exp.aft[0].bezier[3], beza[3], alpha);
+      bezb[0] = beza[3];
+    }
+    if (exp.mvd) {
+      bezd[1] = intermediate (exp.aft[3].bezier[1], bezd[1], alpha);
+      bezd[0] = intermediate (exp.aft[3].bezier[0], bezd[0], alpha);
+      bezc[3] = bezd[0];
+    }
+    bezb[1] = intermediate (exp.aft[1].bezier[1], bezb[1], alpha);
+    bezb[2] = intermediate (exp.aft[1].bezier[2], bezb[2], alpha);
+    bezb[3] = intermediate (exp.aft[1].bezier[3], bezb[3], alpha);
+    bezc[0] = bezb[3];
+    bezc[1] = intermediate (exp.aft[2].bezier[1], bezc[1], alpha);
+    bezc[2] = intermediate (exp.aft[2].bezier[2], bezc[2], alpha);
+
+  } else {                    // 1st part (alpha == 0.. 1 - tlim)
+    alpha = (alpha - exp.tlim ) / (1 - exp.tlim);
+    [beza, bezb] = splitBezier (exp.beza, 1 - alpha);
+    [bezc, bezd] = splitBezier (exp.bezd, alpha);
+
+    let dv = lerp(exp.lngb, exp.lnga, alpha)
+    let dact = distance (bezb[0], bezb[1]);
+    if (dact < 0.1) {
+      bezb[1] = exp.beze[1];
+    } else {
+      bezb[1] = intermediate (bezb[0], bezb[1], dv / dact);
+    }
+    dv = lerp(exp.lngc , exp.lngd, alpha);
+    dact = distance (bezc[2], bezc[3]);
+    if (dact < 0.1) {
+      bezb[2] = exp.beze[2];
+    } else {
+      bezb[2] = intermediate (bezc[3], bezc[2], dv / dact);
+    }
+    bezb[3] = bezc[3];
+    exp.interms = [beza, bezb, bezd];
+  }
+
+} // animExp2p120
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+function interpolateBezierConnection (p10, p11, p12, p20, p21, p22, alpha) {
+/* computes 3 points
+  - 1 is intermediate position between p10 and p20 (obtained by lerp)
+  - 1 is intermediate position between p11 and p21 (obtained by lerp)
+  - 1 is intermediate position between p12 and p22 (computed to maintain alignment of tangents)
+
+p10-p11-p12 must be aligned
+p20-p21-p22 must be aligned
+the 3rd returned point is guaranteed (if the first two do not coincide) :
+ - to be aligned with the first two
+ - to move continuously from p11 at alpha = 0 to p21 at alpha = 1
+
+used to animate the connection of two bezier curves
+  the initial last two points of 1st curve are p10-p11
+  the initial first two points of 2nd curve are p11-p12
+  the final last two points of 1st curve are p20-p21
+  the final first two points of 2nd curve are p21-p22
+
+*/
+
+  let pa = intermediate(p10, p20, alpha);
+  let pb = intermediate(p11, p21, alpha);
+  let d = distance(pa, pb);
+// caution : if pa and pb come too close to each other, the interpolation
+// may give weird results
+
+// algorithm 'by length'
+  let lng0 = distance (p12, p11);
+  let lng1 = distance (p22, p21);
+  let coeff = (lng0 * (1 - alpha) +  lng1 * alpha) / d;
+  return [pa, pb, [pb[0] + coeff * (pb[0]- pa[0]), pb[1] + coeff * (pb[1]- pa[1])]];
+} // interpolateBezierConnection
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+function pushExpIfReady(exp, animHier) {
+
+/* counts calls to a given exp.
+  when required number of calls reached (== bef.length), exp is appended to the
+  list of animations in progress
+*/
+  exp.cntPre = exp.cntPre || 0;
+  ++exp.cntPre;
+
+  if (exp.cntPre >= exp.bef.length) {
+    if (exp.running) throw ('already running !!!!!!!!!!!');
+    exp.running = true;
+    animHier.animsInPr.push(exp);
+
+  }
+} // pushExpIfReady
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+function drawAnim(animHier ) {
+
+  let first = true;
+
+  ctx.beginPath();
+  animHier.path.forEach ( part => {
+    if (part.nature == 'crossing') { // simple crossing
+      drawBezier(part.obj.bezier, first)
+      first = false;
+    } else {  // expansion in progress
+      part.obj.interms.forEach(interm => {
+        drawBezier(interm, first);
+        first = false;
+      }); // interms.forEach
+    } // if expansion
+  }); // animHier.path.forEach
+  ctx.strokeStyle = tbLoops[animHier.kLoop].color;
+  ctx.lineWidth = 2;
+  ctx.stroke();
+//  ctx.lineWidth = 1;
+//  ctx.strokeStyle = '#000';
+//  ctx.stroke();
+
+} // drawAnim
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+} // scope for animate
+
+//------------------------------------------------------------------------
+function setDur(speed) {
+  let tref = 3000 * (101 - speed) / 100;
+  durmin = 0.8 * tref;
+  durmax = 1.2 * tref;
+}
+//------------------------------------------------------------------------
+//------------------------------------------------------------------------
+// beginning of execution
+
+  {
+    canv = document.createElement('canvas');
+    canv.style.position="absolute";
+    document.body.appendChild(canv);
+    ctxGrid = canv.getContext('2d');
+    canv.style.zIndex = 99;
+  } // canvas for grid
+  {
+    canv = document.createElement('canvas');
+    canv.style.position="absolute";
+    document.body.appendChild(canv);
+    ctx = canv.getContext('2d');
+  } // canvas creation
+
+  perpendicular = [];
+// perpendicular entering the hexagon
+  perpendicular[0] = [-msqrt(3)/2, -1/2]; // perpendicular to side 0
+  perpendicular[1] = [ 0         , -1  ]; // perpendicular to side 1
+  perpendicular[2] = [ msqrt(3)/2, -1/2]; // perpendicular to side 2
+  perpendicular[3] = [ msqrt(3)/2,  1/2]; // perpendicular to side 3
+  perpendicular[4] = [ 0         ,  1  ]; // perpendicular to side 4
+  perpendicular[5] = [-msqrt(3)/2,  1/2]; // perpendicular to side 5
+
+  window.addEventListener('click',clickCanvas);
+//  window.addEventListener('resize',resize);
+
+  setDur(speed);
+  controls3.addInteger("Size (30..100) :",30,100,()=>rayHex, val => nRayHex = val);
+  controls3.addInteger("Speed (1..100) :",1,100,()=>speed, val => {
+      speed = val;
+      setDur(val);
+    });
+  controls3.addHr();
+  controls3.addSelect ("Geometry :",
+        probaNames,
+        () => geometryChoice, val => geometryChoice = val);
+  controls3.addInteger("Regularity (0..10) :",0,10,
+           () => (regularity <= 5) ? regularity : ( 5 + 5 / 95  * (regularity - 5)),
+            val => { regularity = val <= 5 ? val : 5 + 95 / 5 * (val - 5)});
+  controls3.addHr();
+  controls3.addSelect ("Color palette :",
+        ['random'].concat(colorNames),
+        () => paletteChoice + 1, val => paletteChoice = val - 1);
+
+  controls3.addBool("Display grid : <>",()=>displayGrid, val => {
+    displayGrid = val;
+    if (!displayGrid) {
+      ctxGrid.clearRect(0, 0, maxx, maxy);
+    } else drawGrid();
+
+  });
+}); // window load listener
+
+  </script>
+</html>

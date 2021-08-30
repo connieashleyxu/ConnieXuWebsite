@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Blobs</title>
+    <link
+      rel="icon"
+      type="image/png"
+      href="https://cdn.glitch.com/a725ba3b-f97b-43d7-91bd-88ffa3289f95%2FConnie_Logo%203.png?v=1630262434474"
+    />
+
+    <meta name="description" content="Blob Experiments." />
+
+    <!-- Import fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Questrial&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Import the webpage's stylesheet -->
+    <link rel="stylesheet" href="/blob.css" />
+
+    <!-- Import the webpage's javascript file -->
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="script.js" defer></script>
+  </head>
+
+  <body>
+    <header class="header" id="myHeader">
+      <!-- nav bar -->
+      <a href="/index.html" class="option"
+        ><img
+          src="https://cdn.glitch.com/a725ba3b-f97b-43d7-91bd-88ffa3289f95%2FConnie_Logo%204.png?v=1630264542936"
+          alt="Connie Xu"
+          class="logo-gif"
+      /></a>
+      <nav>
+        <div class="nav-bar-options">
+          <button class="option">
+            <a href="/index.html" class="option">Work</a>
+          </button>
+          <button class="option">
+            <a href="/about.html" class="option ">About</a>
+          </button>
+          <button class="option">
+            <a href="/contact-me.html" class="option ">Contact Me</a>
+          </button>
+        </div>
+      </nav>
+    </header>
+
+    <div id="cursorBlob"></div>
+    <div class="wrap">
+      <ul class="nav">
+        <a href="ripple.html"><li class="nav__link">Ripple</li></a>
+        <a href="growth.html"><li class="nav__link">Growth</li></a>
+        <a href="separation.html"><li class="nav__link">Separation</li></a>
+      </ul>
+    </div>
+  </body>
+  <script>
+      const blobCursor = (() => {
+        const CURSOR = document.querySelector("#cursorBlob");
+        const LINKS = document.querySelectorAll(".nav__link");
+        const setCursorPos = e => {
+          const { pageX: posX, pageY: posY } = e;
+          CURSOR.style.top = `${posY - CURSOR.offsetHeight / 2}px`;
+          CURSOR.style.left = `${posX - CURSOR.offsetWidth / 2}px`;
+        };
+        document.addEventListener("mousemove", setCursorPos);
+
+        const setCursorHover = () => (CURSOR.style.transform = "scale(2.5)");
+        const removeCursorHover = () => (CURSOR.style.transform = "");
+        LINKS.forEach(link =>
+          link.addEventListener("mouseover", setCursorHover)
+        );
+        LINKS.forEach(link =>
+          link.addEventListener("mouseleave", removeCursorHover)
+        );
+      })();
+    </script>
+</html>
