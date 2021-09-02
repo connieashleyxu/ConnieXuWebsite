@@ -63,7 +63,6 @@
    <canvas id="c"></canvas>
   </body>
   <script>
-  // Customize these...
   var n = 100,
     speed = 10,
     startSize = rand(180,500);
@@ -99,7 +98,7 @@ function setParticle(p, firstRun) {
   var _tl = new TimelineMax().fromTo(p, p.dur, startProps, {
     size:'+='+String(rand(200,400)),
     bezier:[{alpha:rand(0.15,0.65)},{alpha:0}],
-    ease:Power1.easeOut,//ease:Power0.easeNone,
+    ease:Power1.easeOut,
     onComplete:function(){ setParticle(p); }
   });
   if (firstRun) _tl.seek(p.dur*rand());

@@ -155,22 +155,15 @@ window.addEventListener("load",function() {
   const rac3s2 = rac3 / 2;
   const mPIS3 = Math.PI / 3;
 
-//-----------------------------------------------------------------------------
-// miscellaneous functions
-//-----------------------------------------------------------------------------
-
+  
   function alea (min, max) {
-// random number [min..max[ . If no max is provided, [0..min[
-
     if (typeof max == 'undefined') return min * mrandom();
     return min + (max - min) * mrandom();
   }
 
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 
   function intAlea (min, max) {
-// random integer number [min..max[ . If no max is provided, [0..min[
-
     if (typeof max == 'undefined') {
       max = min; min = 0;
     }
