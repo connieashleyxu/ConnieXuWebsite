@@ -55,11 +55,30 @@ body {
 }
 
 #intro-brief {
-  color: #FFF;
+  color: #FFFFFF;
   font-family: 'Roboto', sans-serif;
   font-size: 20px;
   font-weight: 100;
   margin-top: 100px;
+}
+
+#end-brief {
+  color: #FFFFFF;
+  font-family: 'Roboto', sans-serif;
+  font-size: 20px;
+  font-weight: 100;
+  margin-top: 100px;
+  margin-bottom: 50px;
+}
+
+.end-link {
+    color: white;
+    text-decoration: underline;
+}
+
+.end-link:hover {
+    color: #C4C4C4;
+    text-decoration: underline;
 }
 
 .project {
@@ -70,6 +89,54 @@ body {
 .project:hover {
   transform: scale(1.1);
   opacity: 60%;
+}
+
+#nami {
+  width: 80%;
+  margin-left: 30%;
+  margin-bottom: 15%;
+}
+
+.tooltip-nami {
+  width: 30%;
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip-nami .tooltiptext {
+  visibility: hidden;
+  font-family: 'Questrial', sans-serif;
+  width: 120px;
+  background-image: linear-gradient(to right, #FFA9AA , #1F5394);
+  color: #ffffff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 20px 5px;
+  position: absolute;
+  z-index: 1;
+  bottom: 100%;
+  left: 50%;
+  margin-left: -60px;
+  
+  /* Fade in tooltip - takes 1 second to go from 0% to 100% opac: */
+  opacity: 0;
+  transition: opacity 1s;
+}
+
+.tooltip-nami:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
+
+.tooltip-nami  .tooltiptext::after {
+  content: " ";
+  position: absolute;
+  top: 100%; /* At the bottom of the tooltip */
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #90809D transparent transparent transparent;
 }
 
 #operation-math {
@@ -88,7 +155,7 @@ body {
   font-family: 'Questrial', sans-serif;
   width: 120px;
   background-image: linear-gradient(to right, #5DAEE7 , #9ED286);
-  color: #fff;
+  color: #ffffff;
   text-align: center;
   border-radius: 6px;
   padding: 20px 5px;
@@ -170,7 +237,7 @@ body {
 #leaf {
   width:90%;
   padding-top: 20%;
-  margin-left: 10%;
+  margin-left: 30%;
 }
 
 .tooltip-leaf{
@@ -218,7 +285,7 @@ body {
 #blob {
   width:90%;
   padding-top: 20%;
-  margin-left: 10%;
+  margin-left: 20%;
 }
 
 .tooltip-blob{
