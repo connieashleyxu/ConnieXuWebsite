@@ -115,7 +115,7 @@ body {
   position: absolute;
   z-index: 1;
   bottom: 100%;
-  left: 50%;
+  left: 70%;
   margin-left: -60px;
   
   /* Fade in tooltip - takes 1 second to go from 0% to 100% opac: */
@@ -258,7 +258,7 @@ body {
   position: absolute;
   z-index: 1;
   bottom: 75%;
-  left: 60%;
+  left: 70%;
   margin-left: -60px;
   
   /* Fade in tooltip - takes 1 second to go from 0% to 100% opac: */
