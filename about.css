@@ -1,0 +1,292 @@
+* {
+  font-family: ofelia-text, sans-serif;
+  font-weight: 400;
+  font-style: normal;
+
+  transition: all .35s;
+}
+
+body {
+  width: 95vw;
+  overflow-x: hidden;
+
+  height: 100vh;
+  overflow-y: hidden;
+
+  cursor: url('assets/cursor.png'), auto;
+}
+
+a {
+  text-decoration: none;
+  color: #000000;
+
+  cursor: url('assets/pointer.png'), auto;
+}
+
+/* header name */
+h1 {
+  font-weight: 700;
+
+  font-size: 5vw;
+
+  animation: fadeIn linear 0.5s;
+}
+
+@keyframes fadeIn {
+  0% { opacity:0; }
+  100% { opacity:1; }
+}
+/* END OF header name */
+
+/* nav bar */
+.option {
+  font-size: 1.5vw;
+  font-weight: 500;
+
+  display: inline-block;
+  width: 8.5vw;
+  height: 3vw;
+
+  text-decoration: none;
+  line-height: 3vw;
+  color: #000000;
+  border: 0.2vw solid #000000;
+  border-radius: 50px;
+
+  text-align: center;
+  position: relative;
+  top: -3vw;
+
+  animation: fadeIn linear 0.5s;
+}
+
+#work-nav:hover {
+  background: #F3D89A;
+}
+
+#about-nav {
+  background: #E6B7F6;
+}
+
+#contact-nav:hover {
+  background: #A1DCF9;
+}
+/* END OF nav bar */
+
+/* geometric shapes + text */
+#left-blue-rect {
+  height: 25vw;
+  width: 8vw;
+  background-color: #A1DCF9;
+  transform: rotate(30deg);
+
+  position: relative;
+  left: 11vw;
+  top: 4vw;
+
+  animation: linear 0.8s;
+  animation-name: flyInLeftBlueRect;
+  animation-timing-function: ease;
+}
+
+@keyframes flyInLeftBlueRect {
+  0% {
+      top: 0vw;
+      left: 0vw;
+   }
+
+   100% {
+      top: 4vw;
+   }
+}
+
+#pink-arch {
+  width: 28vw;
+  height: 14vw;
+  border-top-left-radius: 500px;
+  border-top-right-radius: 500px;
+  border: 8vw solid #E6B7F6;
+  border-bottom: 0;
+  transform: rotate(-10deg);
+
+  box-sizing: border-box;
+
+  position: absolute;
+  left: 19vw;
+  top: 37vw;
+
+  animation: linear 1s;
+  animation-name: flyInPinkArch;
+  animation-timing-function: ease;
+}
+
+@keyframes flyInPinkArch {
+  0% {
+      top: 0vw;
+   }
+
+   100% {
+      top: 37vw;
+   }
+}
+
+#green-rect {
+  height: 23vw;
+  width: 8vw;
+  background-color: #809848;
+  transform: rotate(-60deg);
+
+  position: relative;
+  left: 32vw;
+  top: -29vw;
+
+  animation: linear 1.3s;
+  animation-name: flyInGreenRect;
+  animation-timing-function: ease;
+}
+
+@keyframes flyInGreenRect {
+  0% {
+      top: -50vw;
+      left: 20vw;
+   }
+
+   100% {
+      top: -29vw;
+   }
+}
+
+#blue-rect {
+  height: 28vw;
+  width: 8vw;
+  background-color: #A1DCF9;
+  transform: rotate(0deg);
+
+  position: relative;
+  left: 50vw;
+  top: -45vw;
+
+  animation: linear 0.8s;
+  animation-name: flyInBlueRect;
+  animation-timing-function: ease;
+}
+
+@keyframes flyInBlueRect {
+  0% {
+      top: -70vw;
+   }
+
+   100% {
+      top: -45vw;
+   }
+}
+
+#green-circle {
+  height: 10vw;
+  width: 10vw;
+  background-color: #809848;
+  border-radius: 50%;
+
+  position: relative;
+  left: 60vw;
+  top: -65vw;
+
+  animation: linear 1.2s;
+  animation-name: flyInGreenCircle;
+  animation-timing-function: ease;
+}
+
+@keyframes flyInGreenCircle {
+  0% {
+      top: -90vw;
+      left: 70vw;
+   }
+
+   100% {
+      top: -65vw;
+   }
+}
+
+#yellow-arch {
+  width: 28vw;
+  height: 14vw;
+  border-top-left-radius: 500px;
+  border-top-right-radius: 500px;
+  border: 8vw solid #F3D89A;
+  border-bottom: 0;
+  transform: rotate(-70deg);
+
+  box-sizing: border-box;
+
+  position: absolute;
+  left: 67vw;
+  top: 28vw;
+
+  animation: linear 0.8s;
+  animation-name: flyInYellowArch;
+  animation-timing-function: ease;
+}
+
+@keyframes flyInYellowArch {
+  0% {
+      top: 15vw;
+      left: 83vw;
+   }
+
+   100% {
+      top: 28vw;
+   }
+}
+
+.work-description {
+  font-size: 6vw;
+  font-weight: 700;
+
+  text-align: center;
+
+  position: relative;
+  top: -78vw;
+
+  animation: fadeIn linear 2s;
+}
+
+.inner-description {
+  display: inline-block;
+}
+
+#design:hover {
+  background-color: #E6B7F6;
+  border-radius: 50vw;
+  padding: 2px 10px 2px 10px;
+  border: 0.5vw solid #000000;
+}
+
+#tech:hover {
+  background-color: #F3D89A;
+  border-radius: 50vw;
+  padding: 2px 10px 2px 10px;
+  border: 0.5vw solid #000000;
+}
+
+.sub-work-description {
+  font-size: 2vw;
+  font-weight: 700;
+
+  text-align: center;
+
+  position: relative;
+  top: -75vw;
+
+  animation: fadeIn linear 2s;
+}
+
+#excites {
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+#excites:hover {
+  font-weight: 700;
+  font-style: italic;
+}
+/* END OF geometric shapes + text */

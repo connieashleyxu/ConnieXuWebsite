@@ -1,0 +1,195 @@
+  FONTS
+
+  Ofelia Text Bold
+  font-family: ofelia-text, sans-serif;
+  font-weight: 700;
+  font-style: normal;
+
+
+  Ofelia Text Bold Italic
+  font-family: ofelia-text, sans-serif;
+  font-weight: 700;
+  font-style: italic;
+
+
+  Ofelia Text Italic
+  font-family: ofelia-text, sans-serif;
+  font-weight: 400;
+  font-style: italic;
+
+
+  Ofelia Text Light
+  font-family: ofelia-text, sans-serif;
+  font-weight: 300;
+  font-style: normal;
+
+
+  Ofelia Text Light Italic
+  font-family: ofelia-text, sans-serif;
+  font-weight: 300;
+  font-style: italic;
+
+
+  Ofelia Text Medium
+  font-family: ofelia-text, sans-serif;
+  font-weight: 500;
+  font-style: normal;
+
+
+  Ofelia Text Medium Italic
+  font-family: ofelia-text, sans-serif;
+  font-weight: 500;
+  font-style: italic;
+
+
+  Ofelia Text Regular
+  font-family: ofelia-text, sans-serif;
+  font-weight: 400;
+  font-style: normal;
+
+
+  Ofelia Text Semibold
+  font-family: ofelia-text, sans-serif;
+  font-weight: 600;
+  font-style: normal;
+
+
+  Ofelia Text Semibold Italic
+  font-family: ofelia-text, sans-serif;
+  font-weight: 600;
+  font-style: italic;
+
+
+  COLORS
+
+  Light Blue
+  #A1DCF9
+
+  Green
+  #809848
+
+  Pink
+  #E6B7F6
+
+  Yellow
+  #F3D89A
+
+
+HTML TEMPLATE 
+
+  <!DOCTYPE html>
+  <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+      <!-- title + favicon -->
+      <title>Connie's Portfolio</title>
+      <link rel="icon" type="image/x-icon" href="assets/favicon.png">
+
+      <!-- link style css -->
+      <link rel="stylesheet" href="operation-math.css">
+
+      <!-- link rotator css -->
+      <link rel="stylesheet" href="https://use.typekit.net/yiz2cmm.css">
+
+      <!-- link jQuery -->
+      <script type="text/javascript" src="/jquery/jquery-3.6.0.min.js"></script>
+
+      <!-- link Ofelia Text font -->
+      <link rel="stylesheet" href="https://use.typekit.net/mfc8fwf.css">
+    </head>
+    <body>
+      <!-- HEADER -->
+      <h1>Connie Xu</h1>
+      <!-- END OF HEADER -->
+
+      <!-- NAV BAR -->
+      <div id="nav-bar">
+          <a href="index.html" class="option" id="work-nav">work</a>
+          <a href="about.html" class="option" id="about-nav">about</a>
+          <a href="contact.html" class="option" id="contact-nav">contact</a>
+      </div>
+      <!-- END OF NAV BAR -->
+
+
+      <!-- link script js file -->
+      <script src="script.js"></script>
+    </body>
+  </html>
+
+
+CSS TEMPLATE
+
+  * {
+    font-family: ofelia-text, sans-serif;
+    font-weight: 400;
+    font-style: normal;
+
+    transition: all .35s;
+  }
+
+  body {
+    width: 95vw;
+    overflow-x: hidden;
+
+    cursor: url('assets/cursor.png'), auto;
+  }
+
+  a {
+    text-decoration: none;
+    color: #000000;
+
+    cursor: url('assets/pointer.png'), auto;
+  }
+
+  /* header name */
+  h1 {
+    font-weight: 700;
+
+    font-size: 5vw;
+
+    animation: fadeIn linear 0.5s;
+  }
+
+  @keyframes fadeIn {
+    0% { opacity:0; }
+    100% { opacity:1; }
+  }
+  /* END OF header name */
+
+  /* nav bar */
+  .option {
+    font-size: 1.5vw;
+    font-weight: 500;
+
+    display: inline-block;
+    width: 8.5vw;
+    height: 3vw;
+
+    text-decoration: none;
+    line-height: 3vw;
+    color: #000000;
+    border: 0.2vw solid #000000;
+    border-radius: 50px;
+
+    text-align: center;
+    position: relative;
+    top: -3vw;
+
+    animation: fadeIn linear 0.5s;
+  }
+
+  #work-nav:hover {
+    background: #F3D89A;
+  }
+
+  #about-nav:hover {
+    background: #E6B7F6;
+  }
+
+  #contact-nav:hover {
+    background: #A1DCF9;
+  }
+  /* END OF nav bar */

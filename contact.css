@@ -1,0 +1,227 @@
+* {
+  font-family: ofelia-text, sans-serif;
+  font-weight: 400;
+  font-style: normal;
+
+  transition: all .35s;
+}
+
+body {
+  width: 95vw;
+  overflow-x: hidden;
+
+  height: 100vh;
+  overflow-y: hidden;
+
+  cursor: url('assets/cursor.png'), auto;
+}
+
+a {
+  text-decoration: none;
+  color: #000000;
+
+  cursor: url('assets/pointer.png'), auto;
+}
+
+/* header name */
+h1 {
+  font-weight: 700;
+
+  font-size: 5vw;
+
+  animation: fadeIn linear 0.5s;
+}
+
+@keyframes fadeIn {
+  0% { opacity:0; }
+  100% { opacity:1; }
+}
+/* END OF header name */
+
+/* nav bar */
+.option {
+  font-size: 1.5vw;
+  font-weight: 500;
+
+  display: inline-block;
+  width: 8.5vw;
+  height: 3vw;
+
+  text-decoration: none;
+  line-height: 3vw;
+  color: #000000;
+  border: 0.2vw solid #000000;
+  border-radius: 50px;
+
+  text-align: center;
+  position: relative;
+  top: -3vw;
+
+  animation: fadeIn linear 0.5s;
+}
+
+#work-nav:hover {
+  background: #F3D89A;
+}
+
+#about-nav:hover {
+  background: #E6B7F6;
+}
+
+#contact-nav {
+  background: #A1DCF9;
+}
+/* END OF nav bar */
+
+/* contact */
+#email {
+  font-size: 2vw;
+  font-weight: 700;
+  line-height: 12vw;
+  color: #F3D89A;
+}
+
+.email-details {
+  font-size: 1vw;
+  color: #B8B8B8;
+}
+
+.email-details-icon {
+  font-size: 2.5vw;
+  color: #B8B8B8;
+}
+
+h2 {
+  font-size: 13vw;
+  font-weight: 700;
+  line-height: 12vw;
+
+  animation: fadeIn linear 0.5s;
+
+  position: relative;
+  top: -16vw;
+}
+
+#arch-dribbble {
+  width: 30vw;
+  height: 15vw;
+  border-top-left-radius: 100vw;
+  border-top-right-radius: 100vw;
+  border: 10vw solid #E6B7F6;
+  border-bottom: 0;
+  transform: rotate(-10deg);
+  opacity: 0.7;
+
+  box-sizing: border-box;
+
+  position: absolute;
+  left: 37vw;
+  top: 35vw;
+}
+
+#arch-dribbble:hover {
+  animation: linear 2s;
+  animation-name: bounceArch;
+  animation-timing-function: ease;
+
+  opacity: 1;
+}
+
+@keyframes bounceArch {
+  0%   { transform: scale(1,1)      rotate(-10deg) translateY(0); }
+  10%  { transform: scale(1.1,.9)   rotate(-10deg) translateY(0); }
+  30%  { transform: scale(.9,1.1)   rotate(-10deg) translateY(-25px); }
+  50%  { transform: scale(1.05,.95) rotate(-10deg) translateY(0); }
+  57%  { transform: scale(1,1)      rotate(-10deg) translateY(-3px); }
+  64%  { transform: scale(1,1)      rotate(-10deg) translateY(0); }
+  100% { transform: scale(1,1)      rotate(-10deg) translateY(0); }
+}
+
+#rectangle-behance {
+  height: 15vw;
+  width: 32vw;
+  background-color: #A1DCF9;
+  transform: rotate(47deg);
+  opacity: 0.7;
+
+  position: relative;
+  left: 46vw;
+  top: -64vw;
+}
+
+#rectangle-behance:hover {
+  animation: linear 2s;
+  animation-name: bounceRect;
+  animation-timing-function: ease;
+
+  opacity: 1;
+}
+
+@keyframes bounceRect {
+  0%   { transform: scale(1,1)      rotate(47deg) translateY(0); }
+  10%  { transform: scale(1.1,.9)   rotate(47deg) translateY(0); }
+  30%  { transform: scale(.9,1.1)   rotate(47deg) translateY(-25px); }
+  50%  { transform: scale(1.05,.95) rotate(47deg) translateY(0); }
+  57%  { transform: scale(1,1)      rotate(47deg) translateY(-3px); }
+  64%  { transform: scale(1,1)      rotate(47deg) translateY(0); }
+  100% { transform: scale(1,1)      rotate(47deg) translateY(0); }
+}
+
+#circle-github {
+  height: 20vw;
+  width: 20vw;
+  background-color: #809848;
+  border-radius: 50%;
+  opacity: 0.7;
+
+  position: relative;
+  left: 72vw;
+  top: -59vw;
+}
+
+#circle-github:hover {
+  animation: linear 2s;
+  animation-name: bounce;
+  animation-timing-function: ease;
+
+  opacity: 1;
+}
+
+@keyframes bounce {
+  0%   { transform: scale(1,1)      translateY(0); }
+  10%  { transform: scale(1.1,.9)   translateY(0); }
+  30%  { transform: scale(.9,1.1)   translateY(-25px); }
+  50%  { transform: scale(1.05,.95) translateY(0); }
+  57%  { transform: scale(1,1)      translateY(-3px); }
+  64%  { transform: scale(1,1)      translateY(0); }
+  100% { transform: scale(1,1)      translateY(0); }
+}
+
+
+.contact-text {
+  font-size: 2vw;
+
+  text-align: center;
+}
+
+#dribbble {
+  position: relative;
+  top: -8vw;
+
+  font-weight: 700;
+}
+
+#behance {
+  position: relative;
+  top: 6vw;
+
+  font-weight: 700;
+}
+
+#github {
+  position: relative;
+  top: 8vw;
+
+  font-weight: 700;
+}
+/* END OF contact */

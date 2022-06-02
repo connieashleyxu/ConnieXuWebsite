@@ -1,0 +1,191 @@
+* {
+  font-family: ofelia-text, sans-serif;
+  font-weight: 400;
+  font-style: normal;
+
+  transition: all .35s;
+}
+
+body {
+  width: 95vw;
+  overflow-x: hidden;
+
+  cursor: url('assets/cursor.png'), auto;
+}
+
+a {
+  text-decoration: none;
+  color: #000000;
+
+  cursor: url('assets/pointer.png'), auto;
+}
+
+/* header name */
+h1 {
+  font-weight: 700;
+
+  font-size: 5vw;
+
+  animation: fadeIn linear 0.5s;
+}
+
+@keyframes fadeIn {
+  0% { opacity:0; }
+  100% { opacity:1; }
+}
+/* END OF header name */
+
+/* nav bar */
+.option {
+  font-size: 1.5vw;
+  font-weight: 500;
+
+  display: inline-block;
+  width: 8.5vw;
+  height: 3vw;
+
+  text-decoration: none;
+  line-height: 3vw;
+  color: #000000;
+  border: 0.2vw solid #000000;
+  border-radius: 50px;
+
+  text-align: center;
+  position: relative;
+  top: -3vw;
+
+  animation: fadeIn linear 0.5s;
+}
+
+#work-nav:hover {
+  background: #F3D89A;
+}
+
+#about-nav:hover {
+  background: #E6B7F6;
+}
+
+#contact-nav:hover {
+  background: #A1DCF9;
+}
+/* END OF nav bar */
+
+/* about connie */
+.column {
+  float: left;
+  width: 50%;
+}
+
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+h2 {
+  font-size: 3.5vw;
+  font-weight: 700;
+}
+
+img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+
+  width: 80%;
+}
+
+/* vertical sliding rotator animation */
+.sentence {
+  font-size: 2.5vw;
+}
+
+.slidingVertical{
+  font-size: 1.5vw;
+	display: inline-block;
+	text-indent: 1px;
+}
+.slidingVertical span{
+	animation: topToBottom 50s linear infinite 0s;
+	color: #000000;
+	opacity: 0.2;
+	overflow: hidden;
+	position: relative;
+}
+.slidingVertical span:nth-child(2){
+	animation-delay: 2.5s;
+}
+.slidingVertical span:nth-child(3){
+	animation-delay: 5s;
+}
+.slidingVertical span:nth-child(4){
+	animation-delay: 7.5s;
+}
+.slidingVertical span:nth-child(5){
+	animation-delay: 10s;
+}
+.slidingVertical span:nth-child(6){
+	animation-delay: 12.5s;
+}
+.slidingVertical span:nth-child(7){
+	animation-delay: 15s;
+}
+.slidingVertical span:nth-child(8){
+	animation-delay: 17.5s;
+}
+.slidingVertical span:nth-child(9){
+	animation-delay: 20s;
+}
+.slidingVertical span:nth-child(10){
+	animation-delay: 22.5s;
+}
+.slidingVertical span:nth-child(11){
+	animation-delay: 25s;
+}
+.slidingVertical span:nth-child(12){
+	animation-delay: 27.5s;
+}
+.slidingVertical span:nth-child(13){
+	animation-delay: 30s;
+}
+.slidingVertical span:nth-child(14){
+	animation-delay: 32.5s;
+}
+.slidingVertical span:nth-child(15){
+	animation-delay: 35s;
+}
+.slidingVertical span:nth-child(16){
+	animation-delay: 37.5s;
+}
+.slidingVertical span:nth-child(17){
+	animation-delay: 40s;
+}
+.slidingVertical span:nth-child(18){
+	animation-delay: 42.5s;
+}
+.slidingVertical span:nth-child(19){
+	animation-delay: 45s;
+}
+.slidingVertical span:nth-child(20){
+	animation-delay: 47.5s;
+}
+
+@keyframes topToBottom{
+	0% { opacity: 0.2; }
+	5% { opacity: 1; }
+	10% { opacity: 0.2; }
+	25% { opacity: 0.2s; }
+	30% { opacity: 0.2; }
+	80% { opacity: 0.2; }
+	100% { opacity: 0.2; }
+}
+
+/* END OF about connie */
+
+/* responsive design for mobile */
+@media only screen and (max-width: 768px) {
+  .column {
+    width: 90%;
+  }
+}
+/* END OF responsive design for mobile */
