@@ -349,6 +349,16 @@ h4 {
   bottom: 1vw;
 }
 
+.footer-coded {
+  font-size: 1vw;
+  text-align: right;
+
+  animation: fadeIn linear 0.5s;
+
+  position: relative;
+  bottom: 1vw;
+}
+
 #more-work:hover {
   font-weight: 700;
 }
