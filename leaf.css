@@ -29,6 +29,18 @@ h1 {
   animation: fadeIn linear 0.5s;
 }
 
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #000000;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #454545;
+}
+
 @keyframes fadeIn {
   0% { opacity:0; }
   100% { opacity:1; }

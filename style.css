@@ -20,6 +20,18 @@ a {
   cursor: url('assets/pointer.png'), auto;
 }
 
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #000000;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #454545;
+}
+
 /* header name */
 h1 {
   font-weight: 700;
